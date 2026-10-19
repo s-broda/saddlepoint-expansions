@@ -109,7 +109,14 @@ def _newton(Kfun, tau, x):
 def spa_saddle(Kfun, x, tau0=None):
     """Saddlepoint ``K'(tau) = x`` in any dimension: Newton's method with backtracking on the
     convex objective ``K(tau) - tau'x``, convergence measured by the Newton decrement (see the
-    Julia package for the stopping rules). ``Kfun(nu, t)`` returns the derivative of order
+    Julia package for the stopping rules). A step is rejected when the objective falls below its
+    tangent plane at the current iterate, when the directional derivative decreases along the
+    step, or when the midpoint of the step is outside the domain: on the strip the objective is
+    convex, so it lies above its tangent plane and its gradient is monotone, and a violation
+    means the step crossed a pole of K into a region where its formula happens to be finite
+    (``-log|1 - t|`` beyond ``t = 1``, where the derivative changes sign). Necessary conditions,
+    which protect cumulant generating functions given without a domain predicate in the usual
+    cases; the predicate remains the safe way. ``Kfun(nu, t)`` returns the derivative of order
     ``nu`` (a tuple) at ``t``, NaN outside the domain. Returns ``(tau, info)``."""
     x = np.asarray(x, dtype=float)
     d = len(x)
@@ -118,6 +125,9 @@ def spa_saddle(Kfun, x, tau0=None):
         raise ValueError("spa_saddle: tau0 must have the length of x")
     tol, nqmax = 1e-12, 3
     z = (0,) * d
+
+    def e(j):
+        return tuple(1 if i == j else 0 for i in range(d))
 
     def obj(t):
         return Kfun(z, t) - float(t @ x)
@@ -142,11 +152,22 @@ def spa_saddle(Kfun, x, tau0=None):
         if np.array_equal(tau + step, tau):
             raise SaddlepointError(f"spa_saddle: the iteration stalled at rounding level with decrement {delta:.2g}")
         lam = 1.0
+        gs = float(g @ step)
         while True:
             tn = tau + lam * step
             fn = obj(tn)
-            if np.isfinite(fn) and fn - f <= 1e-4 * lam * float(g @ step):
-                break
+            if np.isfinite(fn) and fn - f <= 1e-4 * lam * gs:
+                # convexity along the step: on the strip the objective lies above its tangent
+                # plane, f(tau + lam s) >= f(tau) + lam g's; a step across a pole of K into a
+                # region where its formula is still finite (e.g. -log|1-t| beyond t = 1) falls
+                # below it and is rejected; the midpoint test catches a pole between two finite values
+                ctol = 1.5e-8 * max(1.0, abs(f), abs(fn))
+                if fn - f >= lam * gs - ctol and np.isfinite(obj(tau + (lam / 2) * step)):
+                    # and the directional derivative must not decrease along the step,
+                    # (g(tn) - g(tau))'s >= 0, which a logarithmic pole violates by a sign flip
+                    gn = np.array([Kfun(e(j), tn) for j in range(d)]) - x
+                    if np.all(np.isfinite(gn)) and float((gn - g) @ step) >= -1.5e-8 * max(1.0, abs(gs)):
+                        break
             lam /= 2
             if lam < 1e-14 or np.array_equal(tn, tau):
                 raise SaddlepointError(f"spa_saddle: saddlepoint iteration failed to find a descent step (decrement {delta:.2g})")

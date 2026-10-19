@@ -297,6 +297,17 @@ class TPoly:
     def square(self):
         return self * self
 
+    def __abs__(self):
+        """|p| as the polynomial with the sign of the constant term (as in TaylorSeries.jl);
+        undefined, and an error, when the constant term is zero."""
+        c0 = self.c[0]
+        if c0 == 0.0:
+            raise DomainError("TPoly: abs of a polynomial with zero constant term")
+        return self if c0 > 0 else -self
+
+    def absolute(self):
+        return abs(self)
+
     # trigonometric and hyperbolic functions: Taylor coefficients f^(k)(c0)/k! at the constant term
     def _cycle(self, vals):
         N = self.alg.N
@@ -372,7 +383,8 @@ class TPoly:
     _UNARY = {"exp": "exp", "log": "log", "sqrt": "sqrt", "log1p": "log1p", "expm1": "expm1",
               "square": "square", "negative": "negative", "positive": "__pos__",
               "reciprocal": "reciprocal", "conjugate": "conjugate", "sin": "sin", "cos": "cos",
-              "tan": "tan", "sinh": "sinh", "cosh": "cosh", "tanh": "tanh", "arctan": "arctan"}
+              "tan": "tan", "sinh": "sinh", "cosh": "cosh", "tanh": "tanh", "arctan": "arctan",
+              "absolute": "absolute"}
     _BINARY = {"add": "__add__", "subtract": "__sub__", "multiply": "__mul__",
                "true_divide": "__truediv__", "divide": "__truediv__", "power": "__pow__"}
 

@@ -126,3 +126,15 @@ def test_uniform_against_irwin_hall():
     Kab = se.uniform_cgf(2.0, 5.0)
     assert se.derivatives(Kab, 0.0, 2)[(1,)] == pytest.approx(3.5)
     assert se.derivatives(Kab, 0.0, 2)[(2,)] == pytest.approx(9 / 12)
+
+
+def test_saddlepoint_stays_on_the_strip_without_domain():
+    # finite and convex beyond the pole: the convexity test along the step keeps the iteration on the strip
+    Kabs = se.CGF(lambda t: -3 * np.log(np.abs(1 - t[0])), 1)
+    for x in (6.0, 30.0, 300.0):
+        s, _ = se.saddlepoint(Kabs, x)
+        assert s == pytest.approx(1 - 3 / x, rel=1e-10)
+    Kabs2 = se.CGF(lambda t: -np.sum(np.log(np.abs(1 - A @ t))), 2)
+    sa, _ = se.saddlepoint(Kabs2, [30.0, 40.0])
+    st, _ = se.saddlepoint(se.exponential_sums_cgf(A), [30.0, 40.0])
+    assert np.allclose(sa, st, rtol=1e-10)
