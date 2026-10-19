@@ -1,0 +1,370 @@
+"""Truncated multivariate Taylor polynomials (Taylor-mode automatic differentiation).
+
+A :class:`TPoly` is a polynomial in ``d`` variables truncated at total degree ``N``, with
+``float64`` coefficients stored in the graded monomial order of its :class:`Algebra`. The
+arithmetic operations and the elementary functions (``exp``, ``log``, ``sqrt``, powers, division)
+propagate the coefficients exactly (up to rounding), so that evaluating a function written in
+ordinary arithmetic on the variables of an algebra returns its Taylor polynomial, whose
+coefficient of ``u^nu`` is the derivative of order ``nu`` divided by ``nu!``.
+
+Numpy ufuncs work on :class:`TPoly` objects (``np.log(p)``, ``np.exp(p)``, ``np.sqrt(p)``, and
+the arithmetic ufuncs), also elementwise on object arrays of them, so that a cumulant generating
+function written with numpy for float arguments usually works unchanged.
+"""
+from __future__ import annotations
+
+import math
+from functools import lru_cache
+from itertools import combinations_with_replacement
+
+import numpy as np
+
+
+class DomainError(ValueError):
+    """Raised by ``log``, ``sqrt`` and non-integer powers of a polynomial whose constant term
+    is outside the domain of the function (negative, or zero for ``log``)."""
+
+
+def compositions(m, p):
+    """All nonnegative integer ``p``-tuples with sum ``m``, first component descending (the
+    order of the Julia package)."""
+    if p == 1:
+        return [(m,)]
+    out = []
+    for k in range(m, -1, -1):
+        for r in compositions(m - k, p - 1):
+            out.append((k,) + r)
+    return out
+
+
+@lru_cache(maxsize=None)
+def get_algebra(d, N):
+    """The algebra of ``d`` variables truncated at degree ``N`` (cached)."""
+    return Algebra(d, N)
+
+
+class Algebra:
+    """Index tables of the truncated algebra of ``d`` variables and total degree ``N``."""
+
+    def __init__(self, d, N):
+        if d < 1 or N < 0:
+            raise ValueError("Algebra: d must be positive and N nonnegative")
+        self.d = int(d)
+        self.N = int(N)
+        exps = []
+        for k in range(N + 1):
+            exps.extend(compositions(k, d))
+        self.exps = exps
+        self.index = {nu: i for i, nu in enumerate(exps)}
+        self.M = len(exps)
+        self.deg = np.array([sum(nu) for nu in exps])
+        self.degstart = np.searchsorted(self.deg, np.arange(N + 2))   # first index of each degree
+        # product table: pairs (i, j) with deg_i + deg_j <= N and the index of the product monomial
+        I = []
+        J = []
+        Kk = []
+        E = np.array(exps)
+        for i in range(self.M):
+            di = self.deg[i]
+            jmax = self.degstart[N - di + 1]
+            if jmax == 0:
+                continue
+            Ej = E[:jmax]
+            tgt = Ej + E[i]
+            for j in range(jmax):
+                I.append(i)
+                J.append(j)
+                Kk.append(self.index[tuple(tgt[j])])
+        self.pI = np.array(I, dtype=np.intp)
+        self.pJ = np.array(J, dtype=np.intp)
+        self.pK = np.array(Kk, dtype=np.intp)
+
+    def variables(self):
+        """The ``d`` variables as polynomials."""
+        out = []
+        for i in range(self.d):
+            c = np.zeros(self.M)
+            e = tuple(1 if j == i else 0 for j in range(self.d))
+            c[self.index[e]] = 1.0
+            out.append(TPoly(self, c))
+        return out
+
+    def constant(self, value):
+        c = np.zeros(self.M)
+        c[0] = value
+        return TPoly(self, c)
+
+    def mul(self, a, b):
+        return np.bincount(self.pK, weights=a[self.pI] * b[self.pJ], minlength=self.M)
+
+
+class TPoly:
+    """A truncated multivariate Taylor polynomial; see the module docstring."""
+
+    __slots__ = ("alg", "c")
+    __array_priority__ = 1000
+
+    def __init__(self, alg, c):
+        self.alg = alg
+        self.c = c
+
+    # ----- access
+    @property
+    def order(self):
+        return self.alg.N
+
+    def constant_term(self):
+        return float(self.c[0])
+
+    def coeff(self, nu):
+        """The coefficient of ``u^nu`` (``nu`` a tuple), which is ``f^(nu)(0)/nu!``."""
+        return float(self.c[self.alg.index[tuple(nu)]])
+
+    def derivative(self, nu):
+        """The derivative of order ``nu`` at the expansion point: ``nu! * coeff(nu)``."""
+        f = 1
+        for n in nu:
+            f *= math.factorial(n)
+        return f * self.coeff(nu)
+
+    def __repr__(self):
+        return f"TPoly(d={self.alg.d}, N={self.alg.N}, constant={self.c[0]!r})"
+
+    def __float__(self):
+        raise TypeError("a TPoly cannot be converted to a float; use constant_term()")
+
+    def __bool__(self):
+        return bool(np.any(self.c != 0))
+
+    # ----- helpers
+    def _coerce(self, other):
+        if isinstance(other, TPoly):
+            if other.alg is not self.alg:
+                raise ValueError("TPoly: operands belong to different algebras")
+            return other.c, True
+        if isinstance(other, (int, float, np.integer, np.floating)):
+            return float(other), False
+        return NotImplemented, None
+
+    # ----- arithmetic
+    def __neg__(self):
+        return TPoly(self.alg, -self.c)
+
+    def __pos__(self):
+        return self
+
+    def __add__(self, other):
+        o, isp = self._coerce(other)
+        if isp is None:
+            return NotImplemented
+        if isp:
+            return TPoly(self.alg, self.c + o)
+        c = self.c.copy()
+        c[0] += o
+        return TPoly(self.alg, c)
+
+    __radd__ = __add__
+
+    def __sub__(self, other):
+        o, isp = self._coerce(other)
+        if isp is None:
+            return NotImplemented
+        if isp:
+            return TPoly(self.alg, self.c - o)
+        c = self.c.copy()
+        c[0] -= o
+        return TPoly(self.alg, c)
+
+    def __rsub__(self, other):
+        o, isp = self._coerce(other)
+        if isp is None:
+            return NotImplemented
+        c = -self.c
+        c[0] += o
+        return TPoly(self.alg, c)
+
+    def __mul__(self, other):
+        o, isp = self._coerce(other)
+        if isp is None:
+            return NotImplemented
+        if isp:
+            return TPoly(self.alg, self.alg.mul(self.c, o))
+        return TPoly(self.alg, self.c * o)
+
+    __rmul__ = __mul__
+
+    def __truediv__(self, other):
+        o, isp = self._coerce(other)
+        if isp is None:
+            return NotImplemented
+        if isp:
+            return self * TPoly(self.alg, o).reciprocal()
+        return TPoly(self.alg, self.c / o)
+
+    def __rtruediv__(self, other):
+        o, isp = self._coerce(other)
+        if isp is None:
+            return NotImplemented
+        return self.reciprocal() * o
+
+    def __pow__(self, a):
+        if isinstance(a, TPoly):
+            return (a * self.log()).exp()
+        if isinstance(a, (int, np.integer)) and a >= 0:
+            a = int(a)
+            result = self.alg.constant(1.0)
+            base = self
+            while a:
+                if a & 1:
+                    result = result * base
+                a >>= 1
+                if a:
+                    base = base * base
+            return result
+        a = float(a)
+        c0 = self.c[0]
+        if c0 <= 0:
+            if c0 == 0 or a != int(a):
+                raise DomainError("TPoly: power of a polynomial with nonpositive constant term")
+        # f(x) = x^a: f^(k)(c0)/k! = binom(a, k) c0^(a-k)
+        N = self.alg.N
+        coefs = np.empty(N + 1)
+        b = 1.0
+        for k in range(N + 1):
+            coefs[k] = b * c0 ** (a - k)
+            b *= (a - k) / (k + 1)
+        return self._compose(coefs)
+
+    def __rpow__(self, base):
+        return (self * math.log(float(base))).exp()
+
+    def reciprocal(self):
+        c0 = self.c[0]
+        if c0 == 0:
+            raise DomainError("TPoly: division by a polynomial with zero constant term")
+        N = self.alg.N
+        coefs = np.array([(-1) ** k / c0 ** (k + 1) for k in range(N + 1)])
+        return self._compose(coefs)
+
+    def _compose(self, coefs):
+        """sum_k coefs[k] q^k with q = self - constant term (the Taylor series of a univariate
+        function through its derivatives at the constant term)."""
+        alg = self.alg
+        q = self.c.copy()
+        q[0] = 0.0
+        out = np.zeros(alg.M)
+        out[0] = coefs[0]
+        qk = q
+        for k in range(1, alg.N + 1):
+            if k > 1:
+                qk = alg.mul(qk, q)
+            out += coefs[k] * qk
+        return TPoly(alg, out)
+
+    # ----- elementary functions (also reachable as numpy ufuncs)
+    def exp(self):
+        c0 = self.c[0]
+        e = math.exp(c0)
+        N = self.alg.N
+        coefs = np.array([e / math.factorial(k) for k in range(N + 1)])
+        return self._compose(coefs)
+
+    def log(self):
+        c0 = self.c[0]
+        if not c0 > 0:
+            raise DomainError("TPoly: log of a polynomial with nonpositive constant term")
+        N = self.alg.N
+        coefs = np.empty(N + 1)
+        coefs[0] = math.log(c0)
+        for k in range(1, N + 1):
+            coefs[k] = (-1) ** (k + 1) / (k * c0 ** k)
+        return self._compose(coefs)
+
+    def log1p(self):
+        return (self + 1.0).log()
+
+    def expm1(self):
+        return self.exp() - 1.0
+
+    def sqrt(self):
+        c0 = self.c[0]
+        if not c0 > 0:
+            raise DomainError("TPoly: sqrt of a polynomial with nonpositive constant term")
+        return self ** 0.5
+
+    def square(self):
+        return self * self
+
+    def negative(self):
+        return -self
+
+    def reciprocal_ufunc(self):
+        return self.reciprocal()
+
+    def conjugate(self):
+        return self
+
+    # ----- numpy interoperability
+    _UNARY = {"exp": "exp", "log": "log", "sqrt": "sqrt", "log1p": "log1p", "expm1": "expm1",
+              "square": "square", "negative": "negative", "positive": "__pos__",
+              "reciprocal": "reciprocal", "conjugate": "conjugate"}
+    _BINARY = {"add": "__add__", "subtract": "__sub__", "multiply": "__mul__",
+               "true_divide": "__truediv__", "divide": "__truediv__", "power": "__pow__"}
+
+    def __array_ufunc__(self, ufunc, method, *inputs, **kwargs):
+        if method != "__call__" or kwargs.get("out") is not None:
+            return NotImplemented
+        name = ufunc.__name__
+        if name in self._UNARY and len(inputs) == 1:
+            return getattr(self, self._UNARY[name])()
+        if name in self._BINARY and len(inputs) == 2:
+            a, b = inputs
+            if isinstance(a, np.ndarray) or isinstance(b, np.ndarray):
+                # broadcast elementwise, producing an object array of polynomials
+                op = {"add": lambda x, y: x + y, "subtract": lambda x, y: x - y,
+                      "multiply": lambda x, y: x * y, "true_divide": lambda x, y: x / y,
+                      "divide": lambda x, y: x / y, "power": lambda x, y: x ** y}[name]
+                def wrap(v):                # 0-d object array: no ufunc dispatch on the scalar
+                    if isinstance(v, np.ndarray):
+                        return v.astype(object)
+                    w = np.empty((), dtype=object)
+                    w[()] = v
+                    return w
+                return np.frompyfunc(op, 2, 1)(wrap(a), wrap(b))
+            if a is self:
+                r = getattr(self, self._BINARY[name])(b)
+            else:
+                r = getattr(self, {"add": "__radd__", "subtract": "__rsub__", "multiply": "__rmul__",
+                                   "true_divide": "__rtruediv__", "divide": "__rtruediv__",
+                                   "power": "__rpow__"}[name])(a)
+            return r
+        return NotImplemented
+
+
+def exp(x):
+    return x.exp() if isinstance(x, TPoly) else np.exp(x)
+
+
+def log(x):
+    return x.log() if isinstance(x, TPoly) else np.log(x)
+
+
+def sqrt(x):
+    return x.sqrt() if isinstance(x, TPoly) else np.sqrt(x)
+
+
+def variables(d, N):
+    """The ``d`` variables of the algebra of degree ``N``, as a numpy object array."""
+    alg = get_algebra(d, N)
+    v = np.empty(d, dtype=object)
+    for i, p in enumerate(alg.variables()):
+        v[i] = p
+    return v
+
+
+def constant_term(x):
+    return x.constant_term() if isinstance(x, TPoly) else float(x)
+
+
+def is_tpoly(x):
+    return isinstance(x, TPoly)

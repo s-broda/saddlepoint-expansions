@@ -1,0 +1,45 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "saddlepoint-expansions"
+version = "0.1.0"
+description = "Saddlepoint expansions of any order for multivariate tail probabilities and densities, from the cumulant generating function"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+  { name = "Simon A. Broda" },
+  { name = "Raymond Kan" },
+]
+keywords = ["saddlepoint approximation", "tail probability", "asymptotic expansion", "orthant probability", "Taylor-mode automatic differentiation"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Science/Research",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Topic :: Scientific/Engineering :: Mathematics",
+]
+dependencies = [
+  "numpy>=1.24",
+  "scipy>=1.10",
+]
+
+[project.optional-dependencies]
+test = ["pytest>=7"]
+docs = ["sphinx>=7", "furo", "myst-parser"]
+
+[project.urls]
+Repository = "https://github.com/s-broda/saddlepoint-expansions"
+Documentation = "https://s-broda.github.io/saddlepoint-expansions/"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/saddlepoint_expansions"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
