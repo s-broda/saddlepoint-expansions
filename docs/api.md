@@ -48,5 +48,5 @@
 
 ```{eval-rst}
 .. automodule:: saddlepoint_expansions.taylor
-   :members: TPoly, Algebra, get_algebra, variables, DomainError
+   :members: TPoly, Algebra, get_algebra, variables, sincu, sinhc, DomainError
 ```

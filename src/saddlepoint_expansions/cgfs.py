@@ -6,7 +6,7 @@ import numpy as np
 from scipy.linalg import sqrtm
 
 from .cgf import CGF
-from .taylor import DomainError
+from .taylor import DomainError, sinhc
 
 
 def normal_cgf(mu, Sigma):
@@ -173,3 +173,15 @@ def common_component_cgf(m, lam=None):
         return v + k1(np.sum(t), mm[d], ll[d])
 
     return CGF(K, d, domain=lambda t: bool(np.all(t < 0.5) and np.sum(t) < 0.5))
+
+
+def uniform_cgf(a=-1.0, b=1.0):
+    """Uniform distribution on ``[a, b]``: ``K(t) = log sinhc((b - a)t/2) + (a + b)t/2``, with
+    ``sinhc(x) = sinh(x)/x`` (:func:`~saddlepoint_expansions.taylor.sinhc`, which handles the
+    removable singularity at ``t = 0``, where the saddlepoint iteration starts). Finite for all
+    ``t``."""
+    if not b > a:
+        raise ValueError("uniform_cgf: b must exceed a")
+    h = (b - a) / 2
+    m = (a + b) / 2
+    return CGF(lambda t: np.log(sinhc(h * t[0])) + m * t[0], 1)

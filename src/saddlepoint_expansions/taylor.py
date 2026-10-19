@@ -2,7 +2,9 @@
 
 A :class:`TPoly` is a polynomial in ``d`` variables truncated at total degree ``N``, with
 ``float64`` coefficients stored in the graded monomial order of its :class:`Algebra`. The
-arithmetic operations and the elementary functions (``exp``, ``log``, ``sqrt``, powers, division)
+arithmetic operations and the elementary functions (``exp``, ``log``, ``sqrt``, powers, division,
+the trigonometric and hyperbolic functions, ``arctan``, and ``sincu``/``sinhc`` for ``sin(x)/x``
+and ``sinh(x)/x`` with their removable singularity)
 propagate the coefficients exactly (up to rounding), so that evaluating a function written in
 ordinary arithmetic on the variables of an algebra returns its Taylor polynomial, whose
 coefficient of ``u^nu`` is the derivative of order ``nu`` divided by ``nu!``.
@@ -295,6 +297,68 @@ class TPoly:
     def square(self):
         return self * self
 
+    # trigonometric and hyperbolic functions: Taylor coefficients f^(k)(c0)/k! at the constant term
+    def _cycle(self, vals):
+        N = self.alg.N
+        coefs = np.array([vals[k % 4] / math.factorial(k) for k in range(N + 1)])
+        return self._compose(coefs)
+
+    def sin(self):
+        c0 = self.c[0]
+        s, c = math.sin(c0), math.cos(c0)
+        return self._cycle((s, c, -s, -c))
+
+    def cos(self):
+        c0 = self.c[0]
+        s, c = math.sin(c0), math.cos(c0)
+        return self._cycle((c, -s, -c, s))
+
+    def tan(self):
+        return self.sin() / self.cos()
+
+    def sinh(self):
+        c0 = self.c[0]
+        s, c = math.sinh(c0), math.cosh(c0)
+        return self._cycle((s, c, s, c))
+
+    def cosh(self):
+        c0 = self.c[0]
+        s, c = math.sinh(c0), math.cosh(c0)
+        return self._cycle((c, s, c, s))
+
+    def tanh(self):
+        return self.sinh() / self.cosh()
+
+    def arctan(self):
+        # f' (1 + x^2) = 1 differentiated k times: f^(k+1) = -(2 c k f^(k) + k (k-1) f^(k-1))/(1 + c^2)
+        c0 = self.c[0]
+        N = self.alg.N
+        f = np.empty(N + 1)
+        f[0] = math.atan(c0)
+        if N >= 1:
+            f[1] = 1.0 / (1 + c0 * c0)
+        for k in range(1, N):
+            f[k + 1] = -(2 * c0 * k * f[k] + k * (k - 1) * f[k - 1]) / (1 + c0 * c0)
+        coefs = np.array([f[k] / math.factorial(k) for k in range(N + 1)])
+        return self._compose(coefs)
+
+    def sincu(self):
+        """sin(x)/x (unnormalized), with the removable singularity at a zero constant term."""
+        if self.c[0] == 0.0:
+            N = self.alg.N
+            coefs = np.array([((-1) ** (k // 2)) / math.factorial(k + 1) if k % 2 == 0 else 0.0
+                              for k in range(N + 1)])
+            return self._compose(coefs)
+        return self.sin() / self
+
+    def sinhc(self):
+        """sinh(x)/x, with the removable singularity at a zero constant term."""
+        if self.c[0] == 0.0:
+            N = self.alg.N
+            coefs = np.array([1.0 / math.factorial(k + 1) if k % 2 == 0 else 0.0 for k in range(N + 1)])
+            return self._compose(coefs)
+        return self.sinh() / self
+
     def negative(self):
         return -self
 
@@ -307,7 +371,8 @@ class TPoly:
     # ----- numpy interoperability
     _UNARY = {"exp": "exp", "log": "log", "sqrt": "sqrt", "log1p": "log1p", "expm1": "expm1",
               "square": "square", "negative": "negative", "positive": "__pos__",
-              "reciprocal": "reciprocal", "conjugate": "conjugate"}
+              "reciprocal": "reciprocal", "conjugate": "conjugate", "sin": "sin", "cos": "cos",
+              "tan": "tan", "sinh": "sinh", "cosh": "cosh", "tanh": "tanh", "arctan": "arctan"}
     _BINARY = {"add": "__add__", "subtract": "__sub__", "multiply": "__mul__",
                "true_divide": "__truediv__", "divide": "__truediv__", "power": "__pow__"}
 
@@ -351,6 +416,27 @@ def log(x):
 
 def sqrt(x):
     return x.sqrt() if isinstance(x, TPoly) else np.sqrt(x)
+
+
+def sincu(x):
+    """``sin(x)/x`` (unnormalized, unlike ``np.sinc``), equal to 1 at 0; works on floats, arrays
+    and polynomials, where the removable singularity at a zero constant term is handled."""
+    if isinstance(x, TPoly):
+        return x.sincu()
+    x = np.asarray(x, dtype=float)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        return np.where(x == 0, 1.0, np.sin(x) / np.where(x == 0, 1.0, x))
+
+
+def sinhc(x):
+    """``sinh(x)/x``, equal to 1 at 0; works on floats, arrays and polynomials, where the
+    removable singularity at a zero constant term is handled. The cumulant generating function
+    of the uniform distribution on ``[-1, 1]`` is ``log(sinhc(t))``."""
+    if isinstance(x, TPoly):
+        return x.sinhc()
+    x = np.asarray(x, dtype=float)
+    with np.errstate(invalid="ignore", divide="ignore"):
+        return np.where(x == 0, 1.0, np.sinh(x) / np.where(x == 0, 1.0, x))
 
 
 def variables(d, N):

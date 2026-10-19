@@ -90,3 +90,39 @@ def test_univariate_against_exact_values():
     assert abs(f["f"][3] - gamma.pdf(6.0, 3)) / gamma.pdf(6.0, 3) < 1e-5
     rl = se.tailprob(Kg, 6.0, order=4, lower=True)
     assert rl["F"][3] == pytest.approx(1 - r["F"][3])
+
+
+def ih_cdf(x, n):
+    from math import comb, factorial, floor
+    if x <= 0:
+        return 0.0
+    if x >= n:
+        return 1.0
+    return sum((-1) ** k * comb(n, k) * (x - k) ** n for k in range(floor(x) + 1)) / factorial(n)
+
+
+def ih_pdf(x, n):
+    from math import comb, factorial, floor
+    if x <= 0 or x >= n:
+        return 0.0
+    return sum((-1) ** k * comb(n, k) * (x - k) ** (n - 1) for k in range(floor(x) + 1)) / factorial(n - 1)
+
+
+def test_uniform_against_irwin_hall():
+    # the mean of n U(-1,1) variables is (2S - n)/n with S Irwin-Hall; sinhc at the origin
+    D = se.derivatives(se.uniform_cgf(), 0.0, 6)
+    assert D[(2,)] == pytest.approx(1 / 3) and abs(D[(3,)]) < 1e-15
+    assert D[(4,)] == pytest.approx(-2 / 15) and D[(6,)] == pytest.approx(16 / 63)
+    n, x = 10, 0.3
+    Ku = se.sample_mean(se.uniform_cgf(), n)
+    ex = 1 - ih_cdf((n * x + n) / 2, n)
+    fex = n / 2 * ih_pdf((n * x + n) / 2, n)
+    r = se.tailprob(Ku, x, order=4)
+    f = se.density(Ku, x, order=4)
+    ec = np.abs((r["F"] - ex) / ex)
+    ep = np.abs((f["f"] - fex) / fex)
+    assert ec[0] < 2e-2 and ec[1] < 5e-4 and ec[2] < 5e-5 and ec[3] < 5e-6
+    assert ep[0] < 3e-2 and ep[1] < 6e-4 and ep[2] < 5e-6 and ep[3] < 1e-5
+    Kab = se.uniform_cgf(2.0, 5.0)
+    assert se.derivatives(Kab, 0.0, 2)[(1,)] == pytest.approx(3.5)
+    assert se.derivatives(Kab, 0.0, 2)[(2,)] == pytest.approx(9 / 12)

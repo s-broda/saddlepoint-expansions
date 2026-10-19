@@ -94,3 +94,33 @@ def test_integer_powers_and_bool():
     assert bool(u[0]) and not bool(u[0] * 0.0)
     with pytest.raises(TypeError):
         float(u[0])
+
+
+def test_trigonometric_and_hyperbolic():
+    from saddlepoint_expansions import sincu, sinhc
+    u = variables(1, 9)
+    x = u[0]
+    c = 0.4
+    p = c + x
+    for f, fm in ((np.sin, math.sin), (np.cos, math.cos), (np.sinh, math.sinh), (np.cosh, math.cosh)):
+        q = f(p)
+        assert q.coeff((0,)) == pytest.approx(fm(c))
+    assert (np.sin(p) ** 2 + np.cos(p) ** 2 - 1).c == pytest.approx(np.zeros(10), abs=1e-14)
+    assert (np.cosh(p) ** 2 - np.sinh(p) ** 2 - 1).c == pytest.approx(np.zeros(10), abs=1e-14)
+    assert (np.tan(p) - np.sin(p) / np.cos(p)).c == pytest.approx(np.zeros(10), abs=1e-14)
+    assert (np.tanh(p) ** 2 + 1 / np.cosh(p) ** 2 - 1).c == pytest.approx(np.zeros(10), abs=1e-14)
+    a = np.arctan(p)
+    assert a.derivative((1,)) == pytest.approx(1 / (1 + c * c))
+    assert a.derivative((2,)) == pytest.approx(-2 * c / (1 + c * c) ** 2)
+    assert (np.arctan(np.tan(p)) - p).c == pytest.approx(np.zeros(10), abs=1e-12)
+    assert np.sin(p).derivative((5,)) == pytest.approx(math.cos(c))
+    # removable singularities
+    s0 = sinhc(x)
+    assert s0.coeff((0,)) == 1.0 and s0.coeff((2,)) == pytest.approx(1 / 6) and s0.coeff((4,)) == pytest.approx(1 / 120)
+    assert s0.coeff((1,)) == 0.0 and s0.coeff((3,)) == 0.0
+    c0 = sincu(x)
+    assert c0.coeff((2,)) == pytest.approx(-1 / 6) and c0.coeff((4,)) == pytest.approx(1 / 120)
+    assert (sinhc(p) - np.sinh(p) / p).c == pytest.approx(np.zeros(10), abs=1e-14)
+    assert (sincu(p) - np.sin(p) / p).c == pytest.approx(np.zeros(10), abs=1e-14)
+    assert sinhc(0.0) == 1.0 and sincu(0.0) == 1.0 and sinhc(0.5) == pytest.approx(math.sinh(0.5) / 0.5)
+    assert np.allclose(sincu(np.array([0.0, 1.0])), [1.0, math.sin(1.0)])

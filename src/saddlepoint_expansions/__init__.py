@@ -13,10 +13,10 @@ from .bivariate import spa_bi, spa_bi_at
 from .cgf import (CGF, derivatives, kfun, kwhite, linear_combination, marginal, reflect,
                   sample_mean, shift)
 from .cgfs import (common_component_cgf, exponential_sums_cgf, gamma_cgf, ncx2_cgf, normal_cgf,
-                   quadratic_forms_cgf, wishart_diag_cgf)
+                   quadratic_forms_cgf, uniform_cgf, wishart_diag_cgf)
 from .multivariate import spa_mv, spa_mv_at, spa_orthant, spa_orthant2
 from .normal import orthant2, orthant3
-from .taylor import DomainError, TPoly, get_algebra, variables
+from .taylor import DomainError, TPoly, get_algebra, sincu, sinhc, variables
 from .univariate import spa_ratio_pdf, spa_uni
 from .util import SaddlepointError, spa_saddle
 
@@ -26,7 +26,7 @@ __all__ = [
     "CGF", "derivatives", "saddlepoint", "tailprob", "density", "ratio_density", "ratio_tailprob",
     "reflect", "marginal", "linear_combination", "sample_mean", "shift",
     "normal_cgf", "gamma_cgf", "ncx2_cgf", "exponential_sums_cgf", "quadratic_forms_cgf",
-    "wishart_diag_cgf", "common_component_cgf",
+    "wishart_diag_cgf", "common_component_cgf", "uniform_cgf", "sincu", "sinhc",
     "spa_uni", "spa_ratio_pdf", "spa_bi", "spa_bi_at", "spa_mv", "spa_mv_at", "spa_orthant",
     "spa_orthant2", "spa_saddle", "orthant2", "orthant3", "kfun", "kwhite",
     "DomainError", "SaddlepointError", "TPoly", "get_algebra", "variables",

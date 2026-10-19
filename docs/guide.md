@@ -14,7 +14,11 @@ K = CGF(lambda t: -3*np.log(1 - t[0]) - 2*np.log(1 - 2*t[1]), 2,
 The function is evaluated on vectors of truncated multivariate Taylor polynomials
 ({class}`~saddlepoint_expansions.taylor.TPoly`) to generate its derivatives, so it must be
 written generically: arithmetic, `np.exp`, `np.log`, `np.sqrt`, powers, `np.sum`, products
-with constant matrices and vectors (`A @ t`), all work; `math.log`, `float(...)` and calls into
+with constant matrices and vectors (`A @ t`), `np.sin`, `np.cos`, `np.tan`, `np.sinh`,
+`np.cosh`, `np.tanh`, `np.arctan` all work, and {func}`~saddlepoint_expansions.sinhc` and
+{func}`~saddlepoint_expansions.sincu` give $\sinh(x)/x$ and $\sin(x)/x$ with their removable
+singularity at zero (write `np.log(sinhc(t[0]))` for the uniform distribution, not
+`np.log(np.sinh(t[0])/t[0])`, which is $0/0$ at the origin where the saddlepoint iteration starts); `math.log`, `float(...)` and calls into
 numerical libraries that require floats do not. For determinants and inverses of matrices that
 depend on `t`, write the factorization in generic arithmetic as
 {func}`~saddlepoint_expansions.quadratic_forms_cgf` does, or use that constructor.
@@ -33,7 +37,7 @@ vectors. The library: {func}`~saddlepoint_expansions.normal_cgf`,
 {func}`~saddlepoint_expansions.exponential_sums_cgf`,
 {func}`~saddlepoint_expansions.quadratic_forms_cgf`,
 {func}`~saddlepoint_expansions.wishart_diag_cgf`,
-{func}`~saddlepoint_expansions.common_component_cgf`.
+{func}`~saddlepoint_expansions.common_component_cgf`, {func}`~saddlepoint_expansions.uniform_cgf`.
 
 ## Tail probabilities
 

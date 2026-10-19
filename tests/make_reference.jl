@@ -94,6 +94,14 @@ R["uni"] = Dict(
         Dict("m" => 5, "lam" => 10, "x" => 30.0, "order" => 6, "upp" => r.F, "pdf" => f.f) end,
     "gamma_far" => let r = tailprob(Kg, 20.0; order=5); Dict("x" => 20.0, "order" => 5, "upp" => r.F) end)
 
+# the uniform distribution: the mean of 10 U(-1,1) variables (sinhc at the origin)
+Ku = sample_mean(uniform_cgf(), 10)
+R["uniform"] = Dict("n" => 10, "x" => 0.3, "order" => 4,
+    "upp" => tailprob(Ku, 0.3; order=4).F, "pdf" => density(Ku, 0.3; order=4).f,
+    "deriv0" => derivdict(derivatives(uniform_cgf(), [0.0], 6)),
+    "bivar" => let Kb = CGF(t -> log(sinhc(t[1])) + log(sinhc(t[1] + t[2])) + log(sinhc(t[2])), 2)
+        r = tailprob(sample_mean(Kb, 8), [0.4, 0.3]; order=3); Dict("x" => [0.4, 0.3], "order" => 3, "F" => r.F, "tau" => r.tau) end)
+
 # the noncentral F as a ratio
 m_, n_, lam = 4, 12, 3; fq = 2.5; c = fq*m_/n_
 KF = CGF(t -> ncx2_cgf(m_, lam)([t[1]]) + ncx2_cgf(n_)([t[2]]), 2; domain=t -> t[1] < 0.5 && t[2] < 0.5)

@@ -207,3 +207,17 @@ def test_normal_mixed_corner():
     assert rel(r["F"], e["F"]) < 1e-10
     assert abs(r["F"][0] / e["exact"] - 1) < 1e-9
     assert abs(se.orthant2([0.5, 0.3], [[1.0, -0.6], [-0.6, 2.0]]) / e["exact"] - 1) < 1e-12
+
+
+def test_uniform_against_julia():
+    e = REF["uniform"]
+    Ku = se.sample_mean(se.uniform_cgf(), e["n"])
+    assert rel(se.tailprob(Ku, e["x"], order=e["order"])["F"], e["upp"]) < 1e-12
+    assert rel(se.density(Ku, e["x"], order=e["order"])["f"], e["pdf"]) < 1e-12
+    D = se.derivatives(se.uniform_cgf(), 0.0, 6)
+    for key, val in e["deriv0"].items():
+        assert abs(D[(int(key),)] - val) <= 1e-14 * max(1.0, abs(val))
+    b = e["bivar"]
+    Kb = se.CGF(lambda t: np.log(se.sinhc(t[0])) + np.log(se.sinhc(t[0] + t[1])) + np.log(se.sinhc(t[1])), 2)
+    r = se.tailprob(se.sample_mean(Kb, 8), b["x"], order=b["order"])
+    assert rel(r["F"], b["F"]) < 1e-11 and rel(r["tau"], b["tau"]) < 1e-12
