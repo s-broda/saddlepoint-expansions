@@ -84,6 +84,33 @@ ratio_tailprob(K, c, lower=True)["F"]     # P(F <= f), orders 1..3
 ratio_density(K, c)["f"] * (m/n)          # density of F at f
 ```
 
+*Several ratios.* With a vector `r` of length $d$, `K` is the cgf of $(X_1, \dots, X_d, Y_1, \dots, Y_d)$,
+or of $(X_1, \dots, X_d, Y)$ for a common denominator, and `ratio_density` returns the joint density
+of $(X_1/Y_1, \dots, X_d/Y_d)$ at `r` (Theorem 4 with the amplitude expansion of Corollary 1 of
+the paper, every Taylor coefficient from one polynomial of $K(s, -r \circ s + \tau)$), while
+`ratio_tailprob` returns the orthant probability $P(R \ge r)$ with `lower` and `signs` as in
+`tailprob`. The sample autocorrelations at lags one and two, for example, are two ratios of
+quadratic forms with a common denominator:
+
+```python
+N = 50; Mc = np.eye(N) - np.ones((N, N))/N
+A = lambda j: (np.diag(np.ones(N - j), j) + np.diag(np.ones(N - j), -j))/2
+K = quadratic_forms_cgf([Mc @ A(1) @ Mc, Mc @ A(2) @ Mc, Mc])
+ratio_density(K, [-1, -1]/np.sqrt(N), order=5)["f"]
+```
+
+## Closed-form Taylor polynomials
+
+Automatic differentiation is the default, but a `CGF` can carry its Taylor polynomials in closed
+form through the argument `taylor`, a function `taylor(t, N, M)` returning the polynomial of
+degree `N` of $K(t + Mv)$ as a {class}`~saddlepoint_expansions.taylor.TPoly` (built from a
+coefficient table with {func}`~saddlepoint_expansions.taylor.from_coefficients`), or `None`
+outside the domain. {func}`~saddlepoint_expansions.quadratic_forms_cgf` uses this with the trace
+recursion of the paper evaluated directly in the whitened directions, which makes large matrices
+cheap, and the transformations carry the option along; pass `closedform=False` to differentiate
+the generic formula instead. Comparisons between polynomials, or with numbers, compare the
+constant terms, so a cgf written with an `if` on its argument can be differentiated.
+
 ## Derivatives and the saddlepoint
 
 {func}`~saddlepoint_expansions.derivatives`` (K, t, N)` returns all derivatives

@@ -3,9 +3,9 @@ from __future__ import annotations
 
 import numpy as np
 
-from .cgf import CGF, _fact, _taylor, kfun, kwhite, reflect
+from .cgf import CGF, _fact, _taylor, kfun, kwhite, linear_combination, reflect
+from .ratios import ratio_cgf2, ratio_mv
 from .multivariate import spa_mv, spa_orthant, spa_orthant2
-from .taylor import DomainError, get_algebra
 from .univariate import spa_ratio_pdf, spa_uni
 from .util import spa_saddle
 
@@ -121,40 +121,38 @@ def density(K, x, order=3, **kwargs):
 def _ratio_cgf(K, r):
     if K.d != 2:
         raise ValueError("ratio: K must be the joint cumulant generating function of the numerator and the denominator (d = 2)")
-    Kf = K.K
-    dom = None if K.domain is None else (lambda s, D=K.domain: D(np.array([s[0], -r * s[0]])))
-
-    def f(s):
-        t = np.empty(2, dtype=object)
-        t[0] = s[0]
-        t[1] = -r * s[0]
-        return Kf(t)
-
-    return CGF(f, 1, domain=dom)
+    return linear_combination(K, np.array([[1.0], [-float(r)]]))
 
 
-def ratio_density(K, r, order=3):
-    """Saddlepoint expansions of orders ``1..order`` of the density at ``r`` of the ratio
-    ``X1/X2`` of the two components of a vector with cumulant generating function ``K``
-    (``d = 2``), the denominator being positive: the Rice expansion through the saddlepoint of
-    ``K_W(s) = K(s, -r s)`` (Theorem 4 of the paper). Returns a dict with ``f``, ``shat``,
-    ``status`` and ``info``."""
+def ratio_density(K, r, order=3, general=False):
+    """Saddlepoint expansions of orders ``1..order`` of the joint density at ``r`` of the
+    vector of ratios ``R = (X_1/Y_1, ..., X_d/Y_d)``, ``d = len(r)``, with positive denominators.
+    ``K`` is the cgf of ``(X_1..X_d, Y_1..Y_d)`` (dimension ``2d``) or, for a common denominator
+    ``Y``, of ``(X_1..X_d, Y)`` (dimension ``d + 1``). For a scalar ``r`` (one ratio, ``K`` of
+    dimension two) the expansion is the Rice expansion through the saddlepoint of
+    ``K_W(s) = K(s, -r s)`` (Theorem 4 of the paper); for a vector it is Theorem 4 with the
+    amplitude expansion of Corollary 1 in whitened coordinates, every Taylor coefficient taken
+    from one Taylor polynomial of ``K(s, -r*s + tau)`` (:func:`~saddlepoint_expansions.ratios.ratio_mv`).
+    ``general=True`` uses the vector code also for ``d = 1``. Returns a dict with ``f``,
+    ``shat``, ``status`` and ``info``."""
     if order < 1:
         raise ValueError("ratio_density: order must be a positive integer")
+    if np.ndim(r) == 1 and (len(r) > 1 or general):
+        rr = np.asarray(r, dtype=float)
+        f, info = ratio_mv(ratio_cgf2(K, len(rr), "ratio_density"), rr, order)
+        return dict(f=f, shat=info["shat"], status="ok", info=info)
+    if np.ndim(r) == 1:
+        K = ratio_cgf2(K, 1, "ratio_density")
+        r = float(r[0])
+    if general:
+        f, info = ratio_mv(ratio_cgf2(K, 1, "ratio_density"), [r], order)
+        return dict(f=f, shat=float(info["shat"][0]), status="ok", info=info)
     KW = _ratio_cgf(K, r)
     s, sinfo = spa_saddle(kfun(KW, 2), np.array([0.0]), None)
     sh = float(s[0])
     N = 2 * order + 1
-    alg = get_algebra(2, N)
-    v = alg.variables()
-    t = np.empty(2, dtype=object)
-    t[0] = sh + v[0]
-    t[1] = -r * (sh + v[0]) + v[1]
-    try:
-        P = K.K(t)
-    except DomainError:
-        raise RuntimeError("ratio_density: the saddlepoint is outside the domain of K")
-    if not np.isfinite(P.constant_term()):
+    P = _taylor(K, np.array([sh, -r * sh]), N, np.array([[1.0, 0.0], [-float(r), 1.0]]))
+    if P is None:
         raise RuntimeError("ratio_density: the saddlepoint is outside the domain of K")
     KWd = [P.coeff((k, 0)) * _fact((k,)) for k in range(2 * order + 1)]
     gd = [P.coeff((l, 1)) * _fact((l,)) for l in range(2 * order - 1)]
@@ -162,13 +160,26 @@ def ratio_density(K, r, order=3):
     return dict(f=f, shat=sh, status="ok", info=dict(KWd=np.array(KWd), gd=np.array(gd), saddle=sinfo))
 
 
-def ratio_tailprob(K, r, order=3, lower=False):
-    """Saddlepoint expansions of orders ``1..order`` of ``P(X1/X2 >= r)`` (``P(X1/X2 <= r)``
-    with ``lower=True``) for a positive denominator: the univariate expansion of
-    :func:`tailprob` applied to ``W = X1 - r X2`` at ``0``. Returns a dict with ``F``,
-    ``shat``, ``status`` and ``info``."""
+def ratio_tailprob(K, r, order=3, lower=False, signs=None, **kwargs):
+    """Saddlepoint expansions of orders ``1..order`` of ``P(R >= r)`` for the vector of ratios
+    ``R = (X_1/Y_1, ..., X_d/Y_d)`` with positive denominators (``K`` as in
+    :func:`ratio_density`; a scalar ``r`` for one ratio): the probability equals ``P(W >= 0)``
+    for ``W = X - r*Y``, and :func:`tailprob` is applied to ``W`` at ``0`` (Theorem 4 of the
+    paper). ``lower=True`` gives ``P(R <= r)``, ``signs`` a mixed corner, and the other keyword
+    arguments are passed to ``tailprob``. Returns a dict with ``F``, ``shat``, ``status`` and
+    ``info``."""
     if order < 1:
         raise ValueError("ratio_tailprob: order must be a positive integer")
+    if np.ndim(r) == 1 and len(r) > 1:
+        rr = np.asarray(r, dtype=float)
+        d = len(rr)
+        K2 = ratio_cgf2(K, d, "ratio_tailprob")
+        KW = linear_combination(K2, np.vstack([np.eye(d), -np.diag(rr)]))
+        t = tailprob(KW, np.zeros(d), order=order, lower=lower, signs=signs, **kwargs)
+        return dict(F=t["F"], shat=t["tau"], status=t["status"], info=t["info"])
+    if np.ndim(r) == 1:
+        K = ratio_cgf2(K, 1, "ratio_tailprob")
+        r = float(r[0])
     KW = _ratio_cgf(K, r)
-    t = tailprob(KW, 0.0, order=order, lower=lower)
+    t = tailprob(KW, 0.0, order=order, lower=lower, **kwargs)
     return dict(F=t["F"], shat=t["tau"], status=t["status"], info=t["info"])

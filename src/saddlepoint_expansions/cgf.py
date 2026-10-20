@@ -25,6 +25,14 @@ class CGF:
     the formula is finite outside the true domain (``1/(1 - t)`` for ``t > 1``), and it is
     cheaper than an exception.
 
+    ``taylor`` supplies the Taylor polynomials in closed form instead of by automatic
+    differentiation: a function ``taylor(t, N, M)`` returning the polynomial of degree ``N`` in
+    ``v`` of ``K(t + M v)`` as a :class:`~saddlepoint_expansions.taylor.TPoly` (``M = None`` for
+    the identity; ``M`` may be rectangular), or ``None`` outside the domain; build it from a
+    coefficient table with :func:`~saddlepoint_expansions.taylor.from_coefficients`. The library
+    uses it where closed forms are faster (:func:`~saddlepoint_expansions.quadratic_forms_cgf`),
+    and the transformations carry it along.
+
     A ``CGF`` is callable. See :func:`derivatives`, :func:`~saddlepoint_expansions.api.saddlepoint`,
     :func:`~saddlepoint_expansions.api.tailprob`, :func:`~saddlepoint_expansions.api.density`, and
     the transformations :func:`reflect`, :func:`marginal`, :func:`linear_combination`,
@@ -36,18 +44,20 @@ class CGF:
                 domain=lambda t: t[0] < 1 and t[1] < 1 and t[0] + t[1] < 1)
     """
 
-    def __init__(self, K, d, domain=None):
+    def __init__(self, K, d, domain=None, taylor=None):
         if int(d) < 1:
             raise ValueError("CGF: the dimension must be a positive integer")
         self.K = K
         self.d = int(d)
         self.domain = domain
+        self.taylor = taylor
 
     def __call__(self, t):
         return self.K(t)
 
     def __repr__(self):
-        return f"CGF of dimension {self.d}" + (" with domain predicate" if self.domain is not None else "")
+        return (f"CGF of dimension {self.d}" + (" with domain predicate" if self.domain is not None else "")
+                + (" and closed-form Taylor polynomials" if self.taylor is not None else ""))
 
     def __add__(self, other):
         if not isinstance(other, CGF):
@@ -57,7 +67,15 @@ class CGF:
         K1, K2 = self.K, other.K
         d1, d2 = self.domain, other.domain
         dom = d2 if d1 is None else d1 if d2 is None else (lambda t: d1(t) and d2(t))
-        return CGF(lambda t: K1(t) + K2(t), self.d, domain=dom)
+        tf = None
+        if self.taylor is not None or other.taylor is not None:
+            a, b = self, other
+
+            def tf(t, N, M):
+                p1 = _taylor(a, t, N, M)
+                p2 = _taylor(b, t, N, M)
+                return None if (p1 is None or p2 is None) else p1 + p2
+        return CGF(lambda t: K1(t) + K2(t), self.d, domain=dom, taylor=tf)
 
 
 def _indomain(K, t):
@@ -70,6 +88,11 @@ def _taylor(K, t, N, M=None):
     t = np.asarray(t, dtype=float)
     if not _indomain(K, t):
         return None
+    if K.taylor is not None:
+        p = K.taylor(t, N, M)
+        if p is None or not np.isfinite(p.constant_term()):
+            return None
+        return p
     k = K.d if M is None else M.shape[1]
     alg = get_algebra(k, max(N, 1))
     v = np.empty(k, dtype=object)
@@ -165,9 +188,7 @@ def reflect(K, signs=None):
         raise ValueError(f"reflect: signs must have length {K.d}")
     if not np.all((s == 1) | (s == -1)):
         raise ValueError("reflect: signs must be +-1")
-    Kf = K.K
-    dom = None if K.domain is None else (lambda t, D=K.domain: D(s * t))
-    return CGF(lambda t: Kf(s * t), K.d, domain=dom)
+    return linear_combination(K, np.diag(s))
 
 
 def _embed(s, idx, d):
@@ -185,19 +206,25 @@ def marginal(K, idx):
     ii = [int(i) for i in idx]
     if len(ii) == 0 or len(set(ii)) != len(ii) or not all(0 <= i < K.d for i in ii):
         raise ValueError(f"marginal: idx must be distinct indices in 0..{K.d - 1}")
-    Kf, d = K.K, K.d
-    dom = None if K.domain is None else (lambda s, D=K.domain: D(_embed(np.asarray(s, dtype=float), ii, d).astype(float)))
-    return CGF(lambda s: Kf(_embed(s, ii, d)), len(ii), domain=dom)
+    E = np.zeros((K.d, len(ii)))
+    for c, j in enumerate(ii):
+        E[j, c] = 1.0
+    return linear_combination(K, E)
 
 
 def linear_combination(K, B):
     """Cumulant generating function of ``Y = B'X`` for a ``d x k`` matrix ``B``: ``K(B u)``."""
     Bm = np.asarray(B, dtype=float)
+    if Bm.ndim == 1:
+        Bm = Bm.reshape(-1, 1)
     if Bm.shape[0] != K.d:
         raise ValueError(f"linear_combination: B must have {K.d} rows")
     Kf = K.K
-    dom = None if K.domain is None else (lambda u, D=K.domain: D(Bm @ u))
-    return CGF(lambda u: Kf(Bm @ u), Bm.shape[1], domain=dom)
+    dom = None if K.domain is None else (lambda u, D=K.domain: D(Bm @ np.asarray(u, dtype=float)))
+    tf = None
+    if K.taylor is not None:
+        tf = lambda u, N, M: _taylor(K, Bm @ u, N, Bm if M is None else Bm @ M)
+    return CGF(lambda u: Kf(Bm @ u), Bm.shape[1], domain=dom, taylor=tf)
 
 
 def sample_mean(K, n):
@@ -206,7 +233,12 @@ def sample_mean(K, n):
         raise ValueError("sample_mean: n must be positive")
     Kf = K.K
     dom = None if K.domain is None else (lambda t, D=K.domain: D(t / n))
-    return CGF(lambda t: n * Kf(t / n), K.d, domain=dom)
+    tf = None
+    if K.taylor is not None:
+        def tf(t, N, M):
+            p = _taylor(K, np.asarray(t, dtype=float) / n, N, (np.eye(K.d) if M is None else M) / n)
+            return None if p is None else n * p
+    return CGF(lambda t: n * Kf(t / n), K.d, domain=dom, taylor=tf)
 
 
 def shift(K, c):
@@ -215,4 +247,19 @@ def shift(K, c):
     if len(cc) != K.d:
         raise ValueError(f"shift: c must have length {K.d}")
     Kf = K.K
-    return CGF(lambda t: Kf(t) + np.sum(cc * t), K.d, domain=K.domain)
+    tf = None
+    if K.taylor is not None:
+        def tf(t, N, M):
+            p = _taylor(K, t, N, M)
+            if p is None:
+                return None
+            Mm = np.eye(K.d) if M is None else np.asarray(M, dtype=float)
+            alg = get_algebra(Mm.shape[1], max(N, 1))
+            lin = np.zeros(alg.M)
+            lin[0] = float(cc @ np.asarray(t, dtype=float))
+            cM = cc @ Mm
+            for i in range(Mm.shape[1]):
+                e = tuple(1 if j == i else 0 for j in range(Mm.shape[1]))
+                lin[alg.index[e]] = cM[i]
+            return p + TPoly(alg, lin)
+    return CGF(lambda t: Kf(t) + np.sum(cc * t), K.d, domain=K.domain, taylor=tf)

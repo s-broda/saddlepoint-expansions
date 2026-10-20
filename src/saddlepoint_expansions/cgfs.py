@@ -6,7 +6,8 @@ import numpy as np
 from scipy.linalg import sqrtm
 
 from .cgf import CGF
-from .taylor import DomainError, sinhc
+from .multivariate import mi_list
+from .taylor import DomainError, from_coefficients, sinhc
 
 
 def normal_cgf(mu, Sigma):
@@ -96,7 +97,77 @@ def _chol_solve(L, b):
     return w
 
 
-def quadratic_forms_cgf(Mats, Sigma=None, mu=None, scale=1.0):
+def _qf_taylor(B, m, scale, t, N, M):
+    """Taylor polynomial of degree N in v of K(t + M v) for the quadratic forms w'B_j w,
+    w ~ N(m, I), K = -1/2 log det(I - 2C) + 1/2 m'{(I - 2C)^-1 - I}m, times scale, in closed
+    form by the trace recursion in the directions sum_j M_ji B_j (the MATLAB qf_taylor of R. Kan):
+    with D = (I - 2C)^-1 = L L', G_i = L' Dir_i L and y = L'm, the coefficient of v^a is
+    scale 2^(|a|-1)/|a| {tr F_a + |a| y'F_a y}, F_a the symmetrized sum of the products of the G_i
+    in every order; F is formed up to degree ceil(N/2) and the higher traces by splitting.
+    None outside the domain."""
+    d = len(B)
+    n = B[0].shape[0]
+    t = np.asarray(t, dtype=float)
+    Mm = np.eye(d) if M is None else np.asarray(M, dtype=float)
+    k = Mm.shape[1]
+    N = max(N, 1)
+    C = sum(t[j] * B[j] for j in range(d))
+    try:
+        R = np.linalg.cholesky(np.eye(n) - 2 * C).T          # I - 2C = R'R
+    except np.linalg.LinAlgError:
+        return None
+    L = np.linalg.inv(R)                                     # D = L L'
+    y = L.T @ m
+    coeffs = {(0,) * k: scale * (-np.sum(np.log(np.diag(R))) + (y @ y - m @ m) / 2)}
+    G = []
+    for i in range(k):
+        Dir = np.zeros((n, n))
+        for j in range(d):
+            if Mm[j, i] != 0:
+                Dir = Dir + Mm[j, i] * B[j]
+        Gi = L.T @ Dir @ L
+        G.append((Gi + Gi.T) / 2)
+    h = -(-N // 2)
+    hasmean = bool(np.any(m != 0))
+    F = {}
+    Fy = {}
+    for a in mi_list(k, N):
+        l = sum(a)
+        if l == 0:
+            continue
+        if l <= h:
+            if l == 1:
+                Fa = G[a.index(1)]
+            else:
+                Fa = np.zeros((n, n))
+                for i in range(k):
+                    if a[i] > 0:
+                        b = list(a)
+                        b[i] -= 1
+                        Fa = Fa + G[i] @ F[tuple(b)]
+                Fa = (Fa + Fa.T) / 2
+            F[a] = Fa
+            val = np.trace(Fa)
+            if hasmean:
+                Fy[a] = Fa @ y
+                val += l * (y @ Fy[a])
+            coeffs[a] = scale * 2.0 ** (l - 1) / l * val
+        else:
+            kk = l - h
+            tval = 0.0
+            mq = 0.0
+            for g in mi_list(k, kk):
+                if sum(g) != kk or any(gi > ai for gi, ai in zip(g, a)):
+                    continue
+                r = tuple(ai - gi for ai, gi in zip(a, g))
+                tval += np.sum(F[g] * F[r])
+                if hasmean:
+                    mq += Fy[g] @ Fy[r]
+            coeffs[a] = scale * 2.0 ** (l - 1) / l * (tval + l * mq)
+    return from_coefficients(k, N, coeffs)
+
+
+def quadratic_forms_cgf(Mats, Sigma=None, mu=None, scale=1.0, closedform=True):
     """Joint cumulant generating function of the quadratic forms ``Q_i = z'A_i z``,
     ``Mats = [A_1, ..., A_d]`` (symmetric ``p x p``), in ``z ~ N(mu, Sigma)`` (default standard
     normal): ``K(t) = -1/2 log det(I - 2C) + nu'C(I - 2C)^-1 nu``, ``C = sum_i t_i S^1/2 A_i S^1/2``,
@@ -104,7 +175,11 @@ def quadratic_forms_cgf(Mats, Sigma=None, mu=None, scale=1.0):
     ``scale`` is an integer). The domain is where ``I - 2C`` is positive definite. The
     determinant and the solve use a Cholesky factorization in generic arithmetic; the cost of
     one evaluation with derivatives is about ``p^3/6`` polynomial products, so this is for
-    small and moderate ``p``."""
+    small and moderate ``p``. With ``closedform=True`` (the default) the Taylor polynomials,
+    including the whitened ones, are instead computed in closed form by the trace recursion of
+    the paper in the whitened directions (the ``taylor`` option of
+    :class:`~saddlepoint_expansions.CGF`), so that large ``p`` costs matrix products rather than
+    polynomial products; ``closedform=False`` differentiates the generic formula."""
     d = len(Mats)
     if d < 1:
         raise ValueError("quadratic_forms_cgf: Mats must be nonempty")
@@ -138,7 +213,9 @@ def quadratic_forms_cgf(Mats, Sigma=None, mu=None, scale=1.0):
         except np.linalg.LinAlgError:
             return False
 
-    return CGF(K, d, domain=dom)
+    m0 = np.zeros(p) if nu is None else np.asarray(nu, dtype=float)
+    tf = (lambda t, N, M: _qf_taylor(B, m0, scale, t, N, M)) if closedform else None
+    return CGF(K, d, domain=dom, taylor=tf)
 
 
 def wishart_diag_cgf(V, n):

@@ -138,3 +138,64 @@ def test_saddlepoint_stays_on_the_strip_without_domain():
     sa, _ = se.saddlepoint(Kabs2, [30.0, 40.0])
     st, _ = se.saddlepoint(se.exponential_sums_cgf(A), [30.0, 40.0])
     assert np.allclose(sa, st, rtol=1e-10)
+
+
+def test_closed_form_taylor_option_and_vector_ratios():
+    from scipy.special import betaln, betainc, gammaln
+    from scipy.integrate import quad
+    toep = lambda r, n: r ** np.abs(np.subtract.outer(np.arange(n), np.arange(n)))
+    n = 8
+    Kq = se.quadratic_forms_cgf([toep(0.5, n), np.eye(n)], Sigma=toep(0.3, n), mu=0.5 * np.ones(n))
+    Kg = se.quadratic_forms_cgf([toep(0.5, n), np.eye(n)], Sigma=toep(0.3, n), mu=0.5 * np.ones(n), closedform=False)
+    assert Kq.taylor is not None and Kg.taylor is None
+    D1 = se.derivatives(Kq, [0.05, -0.02], 7)
+    D2 = se.derivatives(Kg, [0.05, -0.02], 7)
+    assert all(abs(D1[k] - D2[k]) <= 1e-12 * max(1.0, abs(D2[k])) for k in D1)
+    assert se.derivatives(Kq, [0.5, 0.5], 2) is None
+    r1 = se.tailprob(Kq, [14.0, 13.0], order=4)
+    r2 = se.tailprob(Kg, [14.0, 13.0], order=4)
+    assert np.max(np.abs(r1["F"] - r2["F"]) / r2["F"]) < 1e-12
+    # the option survives the transformations
+    K3q = se.quadratic_forms_cgf([toep(0.5, n), np.eye(n), toep(0.2, n)])
+    K3g = se.quadratic_forms_cgf([toep(0.5, n), np.eye(n), toep(0.2, n)], closedform=False)
+    Ks = se.shift(se.sample_mean(se.reflect(Kq, [1, -1]), 3), [0.1, 0.2]) + se.marginal(K3q, [0, 2])
+    Kt = se.shift(se.sample_mean(se.reflect(Kg, [1, -1]), 3), [0.1, 0.2]) + se.marginal(K3g, [0, 2])
+    assert Ks.taylor is not None
+    Ds = se.derivatives(Ks, [0.03, -0.04], 5)
+    Dt = se.derivatives(Kt, [0.03, -0.04], 5)
+    assert all(abs(Ds[k] - Dt[k]) <= 1e-11 * max(1.0, abs(Dt[k])) for k in Ds)
+    # one ratio: the Rice code and the general code agree
+    f1 = se.ratio_density(Kq, 1.2, order=4)["f"]
+    f2 = se.ratio_density(Kq, 1.2, order=4, general=True)["f"]
+    assert np.max(np.abs(f1 - f2) / f2) < 1e-12
+    assert np.max(np.abs(se.ratio_density(Kq, [1.2], order=4)["f"] - f1) / f1) < 1e-12
+    # two independent ratios of gamma variables: products of beta-prime densities and beta cdfs
+    a = np.array([3.0, 4.0, 5.0, 6.0])
+    K4 = se.CGF(lambda t: -np.sum(a * np.log(1 - t)), 4, domain=lambda t: bool(np.all(t < 1)))
+    r = np.array([0.7, 0.9])
+    bp = lambda x, p, q: x ** (p - 1) * (1 + x) ** (-p - q) / np.exp(betaln(p, q))
+    f = se.ratio_density(K4, r, order=5)["f"]
+    ex = bp(r[0], a[0], a[2]) * bp(r[1], a[1], a[3])
+    ef = np.abs((f - ex) / ex)
+    assert ef[0] < 0.1 and ef[1] < 3e-3 and ef[2] < 2e-4 and ef[4] < 1e-5
+    F = se.ratio_tailprob(K4, r, order=5, lower=True)["F"]
+    exF = betainc(a[0], a[2], r[0] / (1 + r[0])) * betainc(a[1], a[3], r[1] / (1 + r[1]))
+    assert abs(F[4] - exF) / exF < 1e-6 and abs(F[0] - exF) / exF < 2e-2
+    # the rate n^-4 of order four as n doubles
+    e4 = [abs(se.ratio_density(se.sample_mean(K4, nn), r, order=4)["f"][3] / (bp(r[0], nn * a[0], nn * a[2]) * bp(r[1], nn * a[1], nn * a[3])) - 1)
+          for nn in (20, 40)]
+    assert 10 < e4[0] / e4[1] < 22
+    # a common denominator
+    K3 = se.CGF(lambda t: -3 * np.log(1 - t[0]) - 4 * np.log(1 - t[1]) - 5 * np.log(1 - t[2]), 3,
+                domain=lambda t: bool(np.all(t < 1)))
+    gp = lambda x, p: x ** (p - 1) * np.exp(-x - gammaln(p))
+    exc = quad(lambda y: y ** 2 * gp(0.5 * y, 3) * gp(0.8 * y, 4) * gp(y, 5), 0, np.inf, epsrel=1e-12)[0]
+    assert abs(se.ratio_density(K3, [0.5, 0.8], order=4)["f"][3] - exc) / exc < 3e-5
+    with pytest.raises(ValueError):
+        se.ratio_density(K4, [0.5, 0.5, 0.5, 0.5])
+    # comparisons on the constant term
+    u = se.variables(1, 3)
+    assert (u[0] + 0.5) < 1.0 and not ((u[0] + 0.5) > 1.0) and (u[0] - 0.5) < 0.0
+    Kif = se.CGF(lambda t: -3 * np.log(1 - t[0]) if t[0] < 1 else np.nan, 1)
+    assert se.derivatives(Kif, 0.3, 3)[(3,)] == pytest.approx(3 * 2 / 0.7 ** 3)
+    assert se.derivatives(Kif, 2.0, 3) is None

@@ -38,7 +38,9 @@ A library of cumulant generating functions (normal, gamma, noncentral chi-square
 forms in normal variables, Wishart diagonals, sums of exponentials) and transformations
 (reflection, marginals, linear combinations, sample means, independent sums) is included, and
 the lower-level derivative interface (`spa_bi`, `spa_mv`, `spa_orthant`, ...) remains available
-for models with closed-form derivatives.
+for models with closed-form derivatives. A `CGF` can also carry its Taylor polynomials in closed
+form (`quadratic_forms_cgf` does, by the trace recursion of the paper), and `ratio_density` and
+`ratio_tailprob` handle vectors of ratios.
 
 ## Installation
 
@@ -55,7 +57,8 @@ Everything is in double precision. The Julia package also runs in arbitrary prec
 densities in three or more dimensions in higher precision when the terms cancel strongly; here
 the cancellation indicator (`info["kappa_pdf"]`, `info["kappa"]`) is reported instead. The
 Julia package is the reference implementation: the test suite of this package compares every
-function with values computed by it.
+function with values computed by it (`tests/reference_values.csv`, written by
+`test/reference_values.jl` of the Julia package and shared with the MATLAB counterpart).
 
 ## Documentation and tests
 

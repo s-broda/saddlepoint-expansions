@@ -138,6 +138,33 @@ class TPoly:
     def __bool__(self):
         return bool(np.any(self.c != 0))
 
+    # comparisons compare the constant terms, so that code with tests on the argument can be
+    # differentiated (as in the MATLAB counterpart)
+    def _c0cmp(self, other, op):
+        if isinstance(other, TPoly):
+            other = other.c[0]
+        return op(self.c[0], other)
+
+    def __lt__(self, other):
+        return self._c0cmp(other, lambda a, b: a < b)
+
+    def __le__(self, other):
+        return self._c0cmp(other, lambda a, b: a <= b)
+
+    def __gt__(self, other):
+        return self._c0cmp(other, lambda a, b: a > b)
+
+    def __ge__(self, other):
+        return self._c0cmp(other, lambda a, b: a >= b)
+
+    def __eq__(self, other):
+        return self._c0cmp(other, lambda a, b: a == b)
+
+    def __ne__(self, other):
+        return self._c0cmp(other, lambda a, b: a != b)
+
+    __hash__ = None
+
     # ----- helpers
     def _coerce(self, other):
         if isinstance(other, TPoly):
@@ -449,6 +476,19 @@ def sinhc(x):
     x = np.asarray(x, dtype=float)
     with np.errstate(invalid="ignore", divide="ignore"):
         return np.where(x == 0, 1.0, np.sinh(x) / np.where(x == 0, 1.0, x))
+
+
+def from_coefficients(d, N, coeffs):
+    """A polynomial of degree ``N`` in ``d`` variables from a table of its coefficients: a dict
+    from exponent tuples to the coefficient of ``u^nu`` (``f^(nu)/nu!``), missing entries zero.
+    For closed-form ``taylor`` functions of a :class:`~saddlepoint_expansions.CGF`."""
+    alg = get_algebra(d, max(N, 1))
+    c = np.zeros(alg.M)
+    for nu, v in coeffs.items():
+        i = alg.index.get(tuple(nu))
+        if i is not None:
+            c[i] = v
+    return TPoly(alg, c)
 
 
 def variables(d, N):

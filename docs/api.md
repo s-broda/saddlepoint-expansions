@@ -42,11 +42,12 @@
 .. autofunction:: saddlepoint_expansions.orthant3
 .. autofunction:: saddlepoint_expansions.kfun
 .. autofunction:: saddlepoint_expansions.kwhite
+.. autofunction:: saddlepoint_expansions.ratio_mv
 ```
 
 ## The Taylor algebra
 
 ```{eval-rst}
 .. automodule:: saddlepoint_expansions.taylor
-   :members: TPoly, Algebra, get_algebra, variables, sincu, sinhc, DomainError
+   :members: TPoly, Algebra, get_algebra, variables, from_coefficients, sincu, sinhc, DomainError
 ```
