@@ -1,7 +1,8 @@
 """Truncated multivariate Taylor polynomials (Taylor-mode automatic differentiation).
 
 A :class:`TPoly` is a polynomial in ``d`` variables truncated at total degree ``N``, with
-``float64`` coefficients stored in the graded monomial order of its :class:`Algebra`. The
+``float64`` (or ``complex128``) coefficients stored in the graded monomial order of its
+:class:`Algebra`. The
 arithmetic operations and the elementary functions (``exp``, ``log``, ``sqrt``, powers, division,
 the trigonometric and hyperbolic functions, ``arctan``, and ``sincu``/``sinhc`` for ``sin(x)/x``
 and ``sinh(x)/x`` with their removable singularity)
@@ -15,6 +16,7 @@ function written with numpy for float arguments usually works unchanged.
 """
 from __future__ import annotations
 
+import cmath
 import math
 from functools import lru_cache
 from itertools import combinations_with_replacement
@@ -97,7 +99,11 @@ class Algebra:
         return TPoly(self, c)
 
     def mul(self, a, b):
-        return np.bincount(self.pK, weights=a[self.pI] * b[self.pJ], minlength=self.M)
+        w = a[self.pI] * b[self.pJ]
+        if np.iscomplexobj(w):
+            return (np.bincount(self.pK, weights=w.real, minlength=self.M)
+                    + 1j * np.bincount(self.pK, weights=w.imag, minlength=self.M))
+        return np.bincount(self.pK, weights=w, minlength=self.M)
 
 
 class TPoly:
@@ -116,11 +122,11 @@ class TPoly:
         return self.alg.N
 
     def constant_term(self):
-        return float(self.c[0])
+        return self.c[0].item()
 
     def coeff(self, nu):
         """The coefficient of ``u^nu`` (``nu`` a tuple), which is ``f^(nu)(0)/nu!``."""
-        return float(self.c[self.alg.index[tuple(nu)]])
+        return self.c[self.alg.index[tuple(nu)]].item()
 
     def derivative(self, nu):
         """The derivative of order ``nu`` at the expansion point: ``nu! * coeff(nu)``."""
@@ -173,7 +179,13 @@ class TPoly:
             return other.c, True
         if isinstance(other, (int, float, np.integer, np.floating)):
             return float(other), False
+        if isinstance(other, (complex, np.complexfloating)):
+            return complex(other), False
         return NotImplemented, None
+
+    def _ccopy(self, o):
+        """A copy of the coefficients, promoted to complex when the scalar o is complex."""
+        return self.c.astype(np.result_type(self.c, o))
 
     # ----- arithmetic
     def __neg__(self):
@@ -188,7 +200,7 @@ class TPoly:
             return NotImplemented
         if isp:
             return TPoly(self.alg, self.c + o)
-        c = self.c.copy()
+        c = self._ccopy(o)
         c[0] += o
         return TPoly(self.alg, c)
 
@@ -200,7 +212,7 @@ class TPoly:
             return NotImplemented
         if isp:
             return TPoly(self.alg, self.c - o)
-        c = self.c.copy()
+        c = self._ccopy(o)
         c[0] -= o
         return TPoly(self.alg, c)
 
@@ -208,7 +220,7 @@ class TPoly:
         o, isp = self._coerce(other)
         if isp is None:
             return NotImplemented
-        c = -self.c
+        c = -self._ccopy(o)
         c[0] += o
         return TPoly(self.alg, c)
 
@@ -252,12 +264,15 @@ class TPoly:
             return result
         a = float(a)
         c0 = self.c[0]
-        if c0 <= 0:
+        iscomplex = np.iscomplexobj(c0)
+        if not iscomplex and c0 <= 0:
             if c0 == 0 or a != int(a):
                 raise DomainError("TPoly: power of a polynomial with nonpositive constant term")
-        # f(x) = x^a: f^(k)(c0)/k! = binom(a, k) c0^(a-k)
+        if iscomplex and c0 == 0:
+            raise DomainError("TPoly: power of a polynomial with zero constant term")
+        # f(x) = x^a: f^(k)(c0)/k! = binom(a, k) c0^(a-k)  (principal branch for complex c0)
         N = self.alg.N
-        coefs = np.empty(N + 1)
+        coefs = np.empty(N + 1, dtype=complex if iscomplex else float)
         b = 1.0
         for k in range(N + 1):
             coefs[k] = b * c0 ** (a - k)
@@ -281,7 +296,7 @@ class TPoly:
         alg = self.alg
         q = self.c.copy()
         q[0] = 0.0
-        out = np.zeros(alg.M)
+        out = np.zeros(alg.M, dtype=np.result_type(q, coefs))
         out[0] = coefs[0]
         qk = q
         for k in range(1, alg.N + 1):
@@ -293,18 +308,22 @@ class TPoly:
     # ----- elementary functions (also reachable as numpy ufuncs)
     def exp(self):
         c0 = self.c[0]
-        e = math.exp(c0)
+        e = cmath.exp(c0) if np.iscomplexobj(c0) else math.exp(c0)
         N = self.alg.N
         coefs = np.array([e / math.factorial(k) for k in range(N + 1)])
         return self._compose(coefs)
 
     def log(self):
         c0 = self.c[0]
-        if not c0 > 0:
+        iscomplex = np.iscomplexobj(c0)
+        if iscomplex:
+            if c0 == 0:
+                raise DomainError("TPoly: log of a polynomial with zero constant term")
+        elif not c0 > 0:
             raise DomainError("TPoly: log of a polynomial with nonpositive constant term")
         N = self.alg.N
-        coefs = np.empty(N + 1)
-        coefs[0] = math.log(c0)
+        coefs = np.empty(N + 1, dtype=complex if iscomplex else float)
+        coefs[0] = cmath.log(c0) if iscomplex else math.log(c0)
         for k in range(1, N + 1):
             coefs[k] = (-1) ** (k + 1) / (k * c0 ** k)
         return self._compose(coefs)
@@ -317,7 +336,7 @@ class TPoly:
 
     def sqrt(self):
         c0 = self.c[0]
-        if not c0 > 0:
+        if not np.iscomplexobj(c0) and not c0 > 0:
             raise DomainError("TPoly: sqrt of a polynomial with nonpositive constant term")
         return self ** 0.5
 
@@ -483,7 +502,7 @@ def from_coefficients(d, N, coeffs):
     from exponent tuples to the coefficient of ``u^nu`` (``f^(nu)/nu!``), missing entries zero.
     For closed-form ``taylor`` functions of a :class:`~saddlepoint_expansions.CGF`."""
     alg = get_algebra(d, max(N, 1))
-    c = np.zeros(alg.M)
+    c = np.zeros(alg.M, dtype=complex if any(np.iscomplexobj(v) for v in coeffs.values()) else float)
     for nu, v in coeffs.items():
         i = alg.index.get(tuple(nu))
         if i is not None:

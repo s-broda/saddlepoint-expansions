@@ -99,6 +99,56 @@ K = quadratic_forms_cgf([Mc @ A(1) @ Mc, Mc @ A(2) @ Mc, Mc])
 ratio_density(K, [-1, -1]/np.sqrt(N), order=5)["f"]
 ```
 
+## Studentized means
+
+For $Q = X/\sqrt{Y}$ with $Y > 0$, with `K` the joint cumulant generating function of $(X, Y)$,
+the expansions of Bao, Broda and Kan, *Inversion formulas and saddlepoint expansions for
+Studentized means*:
+
+```python
+studentized_density(K, q, order=3)           # density of X/sqrt(Y) at q, orders 1..3
+studentized_tailprob(K, q, order=3)          # P(X/sqrt(Y) >= q); lower=True for P(X/sqrt(Y) <= q)
+studentized_quantile(K, 0.05, order=3)       # the q with P(X/sqrt(Y) <= q) = 0.05 under the expansion
+```
+
+Unlike a ratio, $X - q\sqrt{Y}$ is not linear in $(X, Y)$, and the inversion is a double
+integral with a kernel in $s$ and $t$. The saddlepoint $(\hat s, \hat t, \hat v)$ solves
+$K_s = qv$, $K_t = v^2$, $qs + 2tv = 0$ ({func}`~saddlepoint_expansions.studentized_saddlepoint`);
+the density is the bivariate amplitude expansion about it, and the distribution function is a
+Hauschildt-Robinson type expansion in $s$ after the $t$-integral is expanded by Laplace's method,
+all Taylor coefficients being generated from the Taylor polynomial of `K` at the saddlepoint by
+Newton's method and composition on power series. `order=M` keeps the terms $m \le M - 1$ of the
+density and $m \le 2M - 1$ of the distribution function (relative error $O(n^{-M})$);
+`info["Fp"]` holds every half-order. The saddlepoints for all $q$ lie on the curve
+$sK_s + 2tK_t = 0$ ({func}`~saddlepoint_expansions.studentized_locus`), which is how
+`studentized_quantile` searches: along the curve each $\hat s$ gives its $q$ and its distribution
+function directly, so that no saddlepoint equation is solved for a trial $q$.
+
+The noncentral $t$ distribution, for example, with $X \sim N(\mu, 1)$ and
+$Y \sim \chi^2_\nu/\nu$ independent, $n$ pairs: $\bar X/\sqrt{\bar Y} = T/\sqrt{n}$, $T$
+noncentral $t$ with $n\nu$ degrees of freedom and noncentrality $\sqrt{n}\mu$:
+
+```python
+K = sample_mean(CGF(lambda t: mu*t[0] + t[0]**2/2 - nu/2*np.log(1 - 2*t[1]/nu), 2,
+                    domain=lambda t: t[1] < nu/2), n)
+studentized_tailprob(K, x/np.sqrt(n), lower=True)["F"]     # P(T <= x)
+```
+
+and the limiting Dickey-Fuller $t$-ratio, the Studentized mean $U/\sqrt{V}$ of two functionals
+of a near-unit-root diffusion ({func}`~saddlepoint_expansions.dickey_fuller_cgf`):
+
+```python
+K = dickey_fuller_cgf(2)                                    # a constant in the regression, unit root
+studentized_tailprob(K, -2.862, lower=True)["F"]            # the limiting size of the 5% test, ~ 0.05
+studentized_tailprob(dickey_fuller_cgf(2, c=-5.0), -2.862, lower=True)["F"]   # local power at c = -5
+```
+
+The terms of high order of the density cancel by many orders of magnitude where $|\hat t|$ is
+large; `info["kappa"]` is the cancellation indicator, and in double precision the terms beyond
+the fourth are often unreliable there (the Julia package repeats the computation in higher
+precision; here `status` reports `"coefficients inaccurate"`). The Taylor algebra carries complex
+coefficients for these expansions (the Hessian of the exponent is indefinite where $\hat t < 0$).
+
 ## Closed-form Taylor polynomials
 
 Automatic differentiation is the default, but a `CGF` can carry its Taylor polynomials in closed

@@ -11,7 +11,10 @@ The package implements the expansions of Broda and Kan, *Uniform saddlepoint exp
 multivariate tail probabilities*: the orthant probability `P(X ≥ x)` of a random vector in any
 dimension (first-order term: Kolassa 2003), its density, and the density and distribution
 function of a ratio, with the univariate expansions of Daniels and of Hauschildt and Robinson as
-the one-dimensional case. The expansion of order `M` has relative error `O(n^-M)`, uniformly for
+the one-dimensional case; and those of Bao, Broda and Kan, *Inversion formulas and saddlepoint
+expansions for Studentized means*, for the density and distribution function of `X/sqrt(Y)`
+(`studentized_density`, `studentized_tailprob`, `studentized_quantile`), with the limiting
+Dickey–Fuller `t`-ratio in the library (`dickey_fuller_cgf`). The expansion of order `M` has relative error `O(n^-M)`, uniformly for
 saddlepoints in the closed positive orthant; saddlepoints with negative components are handled
 by inclusion-exclusion.
 
@@ -54,8 +57,9 @@ Python 3.10 or later, numpy and scipy.
 
 Everything is in double precision. The Julia package also runs in arbitrary precision
 (`BigFloat`), uses an exact recursion for the orthant integrals in that case, and repeats
-densities in three or more dimensions in higher precision when the terms cancel strongly; here
-the cancellation indicator (`info["kappa_pdf"]`, `info["kappa"]`) is reported instead. The
+densities in three or more dimensions, and the Studentized-mean density, in higher precision when
+the terms cancel strongly; here the cancellation indicator (`info["kappa_pdf"]`, `info["kappa"]`)
+is reported instead. The
 Julia package is the reference implementation: the test suite of this package compares every
 function with values computed by it (`tests/reference_values.csv`, written by
 `test/reference_values.jl` of the Julia package and shared with the MATLAB counterpart).
@@ -71,6 +75,10 @@ pytest
 ## Citation
 
 > Broda, S. A. and Kan, R. Uniform saddlepoint expansions for multivariate tail probabilities.
+
+and, for the Studentized-mean functions,
+
+> Bao, Y., Broda, S. A. and Kan, R. Inversion formulas and saddlepoint expansions for Studentized means.
 
 ## License
 

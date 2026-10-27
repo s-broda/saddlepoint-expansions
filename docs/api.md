@@ -12,6 +12,11 @@
 .. autofunction:: saddlepoint_expansions.density
 .. autofunction:: saddlepoint_expansions.ratio_density
 .. autofunction:: saddlepoint_expansions.ratio_tailprob
+.. autofunction:: saddlepoint_expansions.studentized_density
+.. autofunction:: saddlepoint_expansions.studentized_tailprob
+.. autofunction:: saddlepoint_expansions.studentized_quantile
+.. autofunction:: saddlepoint_expansions.studentized_saddlepoint
+.. autofunction:: saddlepoint_expansions.studentized_locus
 .. autofunction:: saddlepoint_expansions.reflect
 .. autofunction:: saddlepoint_expansions.marginal
 .. autofunction:: saddlepoint_expansions.linear_combination
