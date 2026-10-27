@@ -13,8 +13,7 @@ dimension (first-order term: Kolassa 2003), its density, and the density and dis
 function of a ratio, with the univariate expansions of Daniels and of Hauschildt and Robinson as
 the one-dimensional case; and those of Bao, Broda and Kan, *Inversion formulas and saddlepoint
 expansions for Studentized means*, for the density and distribution function of `X/sqrt(Y)`
-(`studentized_density`, `studentized_tailprob`, `studentized_quantile`), with the limiting
-Dickey–Fuller `t`-ratio in the library (`dickey_fuller_cgf`). The expansion of order `M` has relative error `O(n^-M)`, uniformly for
+(`studentized_density`, `studentized_tailprob`, `studentized_quantile`). The expansion of order `M` has relative error `O(n^-M)`, uniformly for
 saddlepoints in the closed positive orthant; saddlepoints with negative components are handled
 by inclusion-exclusion.
 

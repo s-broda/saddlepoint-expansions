@@ -134,15 +134,6 @@ K = sample_mean(CGF(lambda t: mu*t[0] + t[0]**2/2 - nu/2*np.log(1 - 2*t[1]/nu), 
 studentized_tailprob(K, x/np.sqrt(n), lower=True)["F"]     # P(T <= x)
 ```
 
-and the limiting Dickey-Fuller $t$-ratio, the Studentized mean $U/\sqrt{V}$ of two functionals
-of a near-unit-root diffusion ({func}`~saddlepoint_expansions.dickey_fuller_cgf`):
-
-```python
-K = dickey_fuller_cgf(2)                                    # a constant in the regression, unit root
-studentized_tailprob(K, -2.862, lower=True)["F"]            # the limiting size of the 5% test, ~ 0.05
-studentized_tailprob(dickey_fuller_cgf(2, c=-5.0), -2.862, lower=True)["F"]   # local power at c = -5
-```
-
 The terms of high order of the density cancel by many orders of magnitude where $|\hat t|$ is
 large; `info["kappa"]` is the cancellation indicator, and in double precision the terms beyond
 the fourth are often unreliable there (the Julia package repeats the computation in higher

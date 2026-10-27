@@ -15,8 +15,8 @@ from .api import density, ratio_density, ratio_tailprob, saddlepoint, tailprob
 from .bivariate import spa_bi, spa_bi_at
 from .cgf import (CGF, derivatives, kfun, kwhite, linear_combination, marginal, reflect,
                   sample_mean, shift)
-from .cgfs import (common_component_cgf, dickey_fuller_cgf, exponential_sums_cgf, gamma_cgf, ncx2_cgf,
-                   normal_cgf, quadratic_forms_cgf, uniform_cgf, wishart_diag_cgf)
+from .cgfs import (common_component_cgf, exponential_sums_cgf, gamma_cgf, ncx2_cgf, normal_cgf,
+                   quadratic_forms_cgf, uniform_cgf, wishart_diag_cgf)
 from .multivariate import spa_mv, spa_mv_at, spa_orthant, spa_orthant2
 from .normal import orthant2, orthant3
 from .ratios import ratio_mv
@@ -26,12 +26,12 @@ from .taylor import DomainError, TPoly, from_coefficients, get_algebra, sincu, s
 from .univariate import spa_ratio_pdf, spa_uni
 from .util import SaddlepointError, spa_saddle
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 __all__ = [
     "CGF", "derivatives", "saddlepoint", "tailprob", "density", "ratio_density", "ratio_tailprob",
     "studentized_density", "studentized_tailprob", "studentized_quantile", "studentized_saddlepoint",
-    "studentized_locus", "dickey_fuller_cgf",
+    "studentized_locus",
     "reflect", "marginal", "linear_combination", "sample_mean", "shift",
     "normal_cgf", "gamma_cgf", "ncx2_cgf", "exponential_sums_cgf", "quadratic_forms_cgf",
     "wishart_diag_cgf", "common_component_cgf", "uniform_cgf", "sincu", "sinhc",

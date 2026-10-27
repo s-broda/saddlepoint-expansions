@@ -9,6 +9,7 @@ import pytest
 from scipy.stats import nct
 
 import saddlepoint_expansions as se
+from _dickey_fuller import dickey_fuller_cgf
 from saddlepoint_expansions.taylor import get_algebra
 
 
@@ -72,7 +73,7 @@ def test_dickey_fuller():
            3: (-3.411, [0.04466519, 0.04979224, 0.04990885, 0.04967211, 0.04978553, 0.04999147],
                [1.307302e-01, 1.305121e-01, 1.304833e-01, 1.306511e-01])}
     for m, (q, Fref, fref) in ref.items():
-        K = se.dickey_fuller_cgf(m)
+        K = dickey_fuller_cgf(m)
         r = se.studentized_tailprob(K, q, order=3, lower=True)
         assert np.max(np.abs(r["info"]["Fp"] - np.array(Fref))) < 1e-8
         d = se.studentized_density(K, q, order=4)
@@ -82,18 +83,18 @@ def test_dickey_fuller():
         assert d["status"] == ("coefficients inaccurate" if d["info"]["kappa"][-1] > 1e10 else "ok")
         assert (d["status"] == "coefficients inaccurate") == (m == 2)
     # the saddlepoint and the distribution function at the 0.75 quantile of M3 under c = -5
-    K = se.dickey_fuller_cgf(3, c=-5.0)
+    K = dickey_fuller_cgf(3, c=-5.0)
     q = -2.025180818400757
     r = se.studentized_tailprob(K, q, order=3, lower=True)
     assert r["saddle"]["s"] == pytest.approx(2.391156286, abs=1e-8)
     assert r["saddle"]["t"] == pytest.approx(10.320589682, abs=1e-8)
     assert abs(r["info"]["Fp"][-1] - 0.739908646) < 1e-8
     # the 5% quantile of the six-term expansion for M2 (exact limit: -2.861569)
-    Q = se.studentized_quantile(se.dickey_fuller_cgf(2), 0.05, order=3)
+    Q = se.studentized_quantile(dickey_fuller_cgf(2), 0.05, order=3)
     assert Q["q"] == pytest.approx(-2.859305, abs=1e-5)
     # the series window of D: the same value on both sides of it
-    K2 = se.dickey_fuller_cgf(2, c=-5.0)
-    K2w = se.dickey_fuller_cgf(2, c=-5.0, window=1e-3)
+    K2 = dickey_fuller_cgf(2, c=-5.0)
+    K2w = dickey_fuller_cgf(2, c=-5.0, window=1e-3)
     assert K2(np.array([0.3, 11.0])) == pytest.approx(K2w(np.array([0.3, 11.0])), rel=1e-10)
     with pytest.raises(ValueError):
-        se.dickey_fuller_cgf(4)
+        dickey_fuller_cgf(4)
