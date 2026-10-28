@@ -47,8 +47,10 @@ form (`quadratic_forms_cgf` does, by the trace recursion of the paper), and `rat
 ## Installation
 
 ```
-pip install git+https://github.com/s-broda/saddlepoint-expansions
+pip install saddlepoint-expansions
 ```
+
+The development version: `pip install git+https://github.com/s-broda/saddlepoint-expansions`.
 
 Python 3.10 or later, numpy and scipy.
 

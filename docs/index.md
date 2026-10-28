@@ -24,8 +24,10 @@ are evaluated.
 ## Installation
 
 ```
-pip install git+https://github.com/s-broda/saddlepoint-expansions
+pip install saddlepoint-expansions
 ```
+
+The development version: `pip install git+https://github.com/s-broda/saddlepoint-expansions`.
 
 ## A first example
 
