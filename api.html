@@ -1,0 +1,913 @@
+<!doctype html>
+<html class="no-js" lang="en" data-content_root="./">
+  <head><meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="color-scheme" content="light dark"><meta name="viewport" content="width=device-width, initial-scale=1" />
+<link rel="index" title="Index" href="genindex.html"><link rel="search" title="Search" href="search.html"><link rel="prev" title="Guide" href="guide.html">
+
+    <!-- Generated with Sphinx 9.1.1 and Furo 2025.12.19 -->
+        <title>API reference - saddlepoint-expansions</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=d111a655" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo.css?v=7bdb33bb" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/furo-extensions.css?v=8dab3a3b" />
+    
+    
+
+
+<style>
+  body {
+    --color-code-background: #f2f2f2;
+  --color-code-foreground: #1e1e1e;
+  
+  }
+  @media not print {
+    body[data-theme="dark"] {
+      --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+    }
+    @media (prefers-color-scheme: dark) {
+      body:not([data-theme="light"]) {
+        --color-code-background: #202020;
+  --color-code-foreground: #d0d0d0;
+  
+      }
+    }
+  }
+</style></head>
+  <body>
+    
+    <script>
+      document.body.dataset.theme = localStorage.getItem("theme") || "auto";
+    </script>
+    
+
+<svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+  <symbol id="svg-toc" viewBox="0 0 24 24">
+    <title>Contents</title>
+    <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 1024 1024">
+      <path d="M408 442h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm-8 204c0 4.4 3.6 8 8 8h480c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8H408c-4.4 0-8 3.6-8 8v56zm504-486H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm0 632H120c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h784c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM115.4 518.9L271.7 642c5.8 4.6 14.4.5 14.4-6.9V388.9c0-7.4-8.5-11.5-14.4-6.9L115.4 505.1a8.74 8.74 0 0 0 0 13.8z"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-menu" viewBox="0 0 24 24">
+    <title>Menu</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-menu">
+      <line x1="3" y1="12" x2="21" y2="12"></line>
+      <line x1="3" y1="6" x2="21" y2="6"></line>
+      <line x1="3" y1="18" x2="21" y2="18"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-arrow-right" viewBox="0 0 24 24">
+    <title>Expand</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather-chevron-right">
+      <polyline points="9 18 15 12 9 6"></polyline>
+    </svg>
+  </symbol>
+  <symbol id="svg-sun" viewBox="0 0 24 24">
+    <title>Light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="feather-sun">
+      <circle cx="12" cy="12" r="5"></circle>
+      <line x1="12" y1="1" x2="12" y2="3"></line>
+      <line x1="12" y1="21" x2="12" y2="23"></line>
+      <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+      <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+      <line x1="1" y1="12" x2="3" y2="12"></line>
+      <line x1="21" y1="12" x2="23" y2="12"></line>
+      <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+      <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon" viewBox="0 0 24 24">
+    <title>Dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-moon">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" />
+    </svg>
+  </symbol>
+  <symbol id="svg-sun-with-moon" viewBox="0 0 24 24">
+    <title>Auto light/dark, in light mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path style="opacity: 50%" d="M 5.411 14.504 C 5.471 14.504 5.532 14.504 5.591 14.504 C 3.639 16.319 4.383 19.569 6.931 20.352 C 7.693 20.586 8.512 20.551 9.25 20.252 C 8.023 23.207 4.056 23.725 2.11 21.184 C 0.166 18.642 1.702 14.949 4.874 14.536 C 5.051 14.512 5.231 14.5 5.411 14.5 L 5.411 14.504 Z"/>
+      <line x1="14.5" y1="3.25" x2="14.5" y2="1.25"/>
+      <line x1="14.5" y1="15.85" x2="14.5" y2="17.85"/>
+      <line x1="10.044" y1="5.094" x2="8.63" y2="3.68"/>
+      <line x1="19" y1="14.05" x2="20.414" y2="15.464"/>
+      <line x1="8.2" y1="9.55" x2="6.2" y2="9.55"/>
+      <line x1="20.8" y1="9.55" x2="22.8" y2="9.55"/>
+      <line x1="10.044" y1="14.006" x2="8.63" y2="15.42"/>
+      <line x1="19" y1="5.05" x2="20.414" y2="3.636"/>
+      <circle cx="14.5" cy="9.55" r="3.6"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-moon-with-sun" viewBox="0 0 24 24">
+    <title>Auto light/dark, in dark mode</title>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round"
+      class="icon-custom-derived-from-feather-sun-and-tabler-moon">
+      <path d="M 8.282 7.007 C 8.385 7.007 8.494 7.007 8.595 7.007 C 5.18 10.184 6.481 15.869 10.942 17.24 C 12.275 17.648 13.706 17.589 15 17.066 C 12.851 22.236 5.91 23.143 2.505 18.696 C -0.897 14.249 1.791 7.786 7.342 7.063 C 7.652 7.021 7.965 7 8.282 7 L 8.282 7.007 Z"/>
+      <line style="opacity: 50%" x1="18" y1="3.705" x2="18" y2="2.5"/>
+      <line style="opacity: 50%" x1="18" y1="11.295" x2="18" y2="12.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="4.816" x2="14.464" y2="3.964"/>
+      <line style="opacity: 50%" x1="20.711" y1="10.212" x2="21.563" y2="11.063"/>
+      <line style="opacity: 50%" x1="14.205" y1="7.5" x2="13.001" y2="7.5"/>
+      <line style="opacity: 50%" x1="21.795" y1="7.5" x2="23" y2="7.5"/>
+      <line style="opacity: 50%" x1="15.316" y1="10.184" x2="14.464" y2="11.036"/>
+      <line style="opacity: 50%" x1="20.711" y1="4.789" x2="21.563" y2="3.937"/>
+      <circle style="opacity: 50%" cx="18" cy="7.5" r="2.169"/>
+    </svg>
+  </symbol>
+  <symbol id="svg-pencil" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-pencil-code">
+      <path d="M4 20h4l10.5 -10.5a2.828 2.828 0 1 0 -4 -4l-10.5 10.5v4" />
+      <path d="M13.5 6.5l4 4" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+  <symbol id="svg-eye" viewBox="0 0 24 24">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+      stroke-width="1" stroke-linecap="round" stroke-linejoin="round" class="icon-tabler-eye-code">
+      <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+      <path d="M10 12a2 2 0 1 0 4 0a2 2 0 0 0 -4 0" />
+      <path
+        d="M11.11 17.958c-3.209 -.307 -5.91 -2.293 -8.11 -5.958c2.4 -4 5.4 -6 9 -6c3.6 0 6.6 2 9 6c-.21 .352 -.427 .688 -.647 1.008" />
+      <path d="M20 21l2 -2l-2 -2" />
+      <path d="M17 17l-2 2l2 2" />
+    </svg>
+  </symbol>
+</svg>
+
+<input type="checkbox" class="sidebar-toggle" name="__navigation" id="__navigation" aria-label="Toggle site navigation sidebar">
+<input type="checkbox" class="sidebar-toggle" name="__toc" id="__toc" aria-label="Toggle table of contents sidebar">
+<label class="overlay sidebar-overlay" for="__navigation"></label>
+<label class="overlay toc-overlay" for="__toc"></label>
+
+<a class="skip-to-content muted-link" href="#furo-main-content">Skip to content</a>
+
+
+
+<div class="page">
+  <header class="mobile-header">
+    <div class="header-left">
+      <label class="nav-overlay-icon" for="__navigation">
+        <span class="icon"><svg><use href="#svg-menu"></use></svg></span>
+      </label>
+    </div>
+    <div class="header-center">
+      <a href="index.html"><div class="brand">saddlepoint-expansions</div></a>
+    </div>
+    <div class="header-right">
+      <div class="theme-toggle-container theme-toggle-header">
+        <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+          <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+          <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+          <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+          <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+        </button>
+      </div>
+      <label class="toc-overlay-icon toc-header-icon" for="__toc">
+        <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+      </label>
+    </div>
+  </header>
+  <aside class="sidebar-drawer">
+    <div class="sidebar-container">
+      
+      <div class="sidebar-sticky"><a class="sidebar-brand" href="index.html">
+  
+  <span class="sidebar-brand-text">saddlepoint-expansions</span>
+  
+</a><form class="sidebar-search-container" method="get" action="search.html" role="search">
+  <input class="sidebar-search" placeholder="Search" name="q" aria-label="Search">
+  <input type="hidden" name="check_keywords" value="yes">
+  <input type="hidden" name="area" value="default">
+</form>
+<div id="searchbox"></div><div class="sidebar-scroll"><div class="sidebar-tree">
+  <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="guide.html">Guide</a></li>
+<li class="toctree-l1 current current-page"><a class="current reference internal" href="#">API reference</a></li>
+</ul>
+
+</div>
+</div>
+
+      </div>
+      
+    </div>
+  </aside>
+  <div class="main">
+    <div class="content">
+      <div class="article-container">
+        <a href="#" class="back-to-top muted-link">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+            <path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12z"></path>
+          </svg>
+          <span>Back to top</span>
+        </a>
+        <div class="content-icon-container">
+          <div class="view-this-page">
+  <a class="muted-link" href="_sources/api.md.txt" title="View this page">
+    <svg><use href="#svg-eye"></use></svg>
+    <span class="visually-hidden">View this page</span>
+  </a>
+</div>
+<div class="theme-toggle-container theme-toggle-content">
+            <button class="theme-toggle" aria-label="Toggle Light / Dark / Auto color theme">
+              <svg class="theme-icon-when-auto-light"><use href="#svg-sun-with-moon"></use></svg>
+              <svg class="theme-icon-when-auto-dark"><use href="#svg-moon-with-sun"></use></svg>
+              <svg class="theme-icon-when-dark"><use href="#svg-moon"></use></svg>
+              <svg class="theme-icon-when-light"><use href="#svg-sun"></use></svg>
+            </button>
+          </div>
+          <label class="toc-overlay-icon toc-content-icon" for="__toc">
+            <span class="icon"><svg><use href="#svg-toc"></use></svg></span>
+          </label>
+        </div>
+        <article role="main" id="furo-main-content">
+          <section class="tex2jax_ignore mathjax_ignore" id="api-reference">
+<h1>API reference<a class="headerlink" href="#api-reference" title="Link to this heading">¶</a></h1>
+<section id="cumulant-generating-functions-and-the-high-level-interface">
+<h2>Cumulant generating functions and the high-level interface<a class="headerlink" href="#cumulant-generating-functions-and-the-high-level-interface" title="Link to this heading">¶</a></h2>
+<dl class="py class">
+<dt class="sig sig-object py" id="saddlepoint_expansions.CGF">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">CGF</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">domain</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">taylor</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.CGF" title="Link to this definition">¶</a></dt>
+<dd><p>A cumulant generating function <code class="docutils literal notranslate"><span class="pre">K</span></code> of a random vector of dimension <code class="docutils literal notranslate"><span class="pre">d</span></code>.</p>
+<p><code class="docutils literal notranslate"><span class="pre">K</span></code> is a callable <code class="docutils literal notranslate"><span class="pre">K(t)</span></code> for a numpy vector <code class="docutils literal notranslate"><span class="pre">t</span></code> of length <code class="docutils literal notranslate"><span class="pre">d</span></code> (also when <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">1</span></code>:
+write <code class="docutils literal notranslate"><span class="pre">t[0]</span></code>). It must be written generically, with arithmetic and numpy functions
+(<code class="docutils literal notranslate"><span class="pre">np.log</span></code>, <code class="docutils literal notranslate"><span class="pre">np.exp</span></code>, <code class="docutils literal notranslate"><span class="pre">np.sqrt</span></code>, powers, <code class="docutils literal notranslate"><span class="pre">np.sum</span></code>, products with constant matrices),
+because it is evaluated on vectors of truncated Taylor polynomials to generate its
+derivatives. Avoid <code class="docutils literal notranslate"><span class="pre">math.log</span></code> and the like, <code class="docutils literal notranslate"><span class="pre">float(...)</span></code> conversions, and library calls
+that require floats. Outside the domain it may raise a <code class="xref py py-class docutils literal notranslate"><span class="pre">DomainError</span></code> (<code class="docutils literal notranslate"><span class="pre">np.log</span></code> and
+<code class="docutils literal notranslate"><span class="pre">np.sqrt</span></code> of a negative constant term do this automatically) or return a non-finite value.</p>
+<p><code class="docutils literal notranslate"><span class="pre">domain</span></code> is an optional predicate <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">-&gt;</span> <span class="pre">bool</span></code> for the domain of <code class="docutils literal notranslate"><span class="pre">K</span></code>. It is needed when
+the formula is finite outside the true domain (<code class="docutils literal notranslate"><span class="pre">1/(1</span> <span class="pre">-</span> <span class="pre">t)</span></code> for <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">&gt;</span> <span class="pre">1</span></code>), and it is
+cheaper than an exception.</p>
+<p><code class="docutils literal notranslate"><span class="pre">taylor</span></code> supplies the Taylor polynomials in closed form instead of by automatic
+differentiation: a function <code class="docutils literal notranslate"><span class="pre">taylor(t,</span> <span class="pre">N,</span> <span class="pre">M)</span></code> returning the polynomial of degree <code class="docutils literal notranslate"><span class="pre">N</span></code> in
+<code class="docutils literal notranslate"><span class="pre">v</span></code> of <code class="docutils literal notranslate"><span class="pre">K(t</span> <span class="pre">+</span> <span class="pre">M</span> <span class="pre">v)</span></code> as a <a class="reference internal" href="#saddlepoint_expansions.taylor.TPoly" title="saddlepoint_expansions.taylor.TPoly"><code class="xref py py-class docutils literal notranslate"><span class="pre">TPoly</span></code></a> (<code class="docutils literal notranslate"><span class="pre">M</span> <span class="pre">=</span> <span class="pre">None</span></code> for
+the identity; <code class="docutils literal notranslate"><span class="pre">M</span></code> may be rectangular), or <code class="docutils literal notranslate"><span class="pre">None</span></code> outside the domain; build it from a
+coefficient table with <a class="reference internal" href="#saddlepoint_expansions.taylor.from_coefficients" title="saddlepoint_expansions.taylor.from_coefficients"><code class="xref py py-func docutils literal notranslate"><span class="pre">from_coefficients()</span></code></a>. The library
+uses it where closed forms are faster (<code class="xref py py-func docutils literal notranslate"><span class="pre">quadratic_forms_cgf()</span></code>),
+and the transformations carry it along.</p>
+<p>A <code class="docutils literal notranslate"><span class="pre">CGF</span></code> is callable. See <a class="reference internal" href="#saddlepoint_expansions.derivatives" title="saddlepoint_expansions.derivatives"><code class="xref py py-func docutils literal notranslate"><span class="pre">derivatives()</span></code></a>, <code class="xref py py-func docutils literal notranslate"><span class="pre">saddlepoint()</span></code>,
+<code class="xref py py-func docutils literal notranslate"><span class="pre">tailprob()</span></code>, <code class="xref py py-func docutils literal notranslate"><span class="pre">density()</span></code>, and
+the transformations <a class="reference internal" href="#saddlepoint_expansions.reflect" title="saddlepoint_expansions.reflect"><code class="xref py py-func docutils literal notranslate"><span class="pre">reflect()</span></code></a>, <a class="reference internal" href="#saddlepoint_expansions.marginal" title="saddlepoint_expansions.marginal"><code class="xref py py-func docutils literal notranslate"><span class="pre">marginal()</span></code></a>, <a class="reference internal" href="#saddlepoint_expansions.linear_combination" title="saddlepoint_expansions.linear_combination"><code class="xref py py-func docutils literal notranslate"><span class="pre">linear_combination()</span></code></a>,
+<a class="reference internal" href="#saddlepoint_expansions.sample_mean" title="saddlepoint_expansions.sample_mean"><code class="xref py py-func docutils literal notranslate"><span class="pre">sample_mean()</span></code></a>, <a class="reference internal" href="#saddlepoint_expansions.shift" title="saddlepoint_expansions.shift"><code class="xref py py-func docutils literal notranslate"><span class="pre">shift()</span></code></a> and <code class="docutils literal notranslate"><span class="pre">K1</span> <span class="pre">+</span> <span class="pre">K2</span></code> (sum of independent vectors).</p>
+<p>Example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">K</span> <span class="o">=</span> <span class="n">CGF</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="o">-</span><span class="mi">3</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="n">domain</span><span class="o">=</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.derivatives">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">derivatives</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.derivatives" title="Link to this definition">¶</a></dt>
+<dd><p>All derivatives <code class="docutils literal notranslate"><span class="pre">K^(nu)(t)</span></code> of orders <code class="docutils literal notranslate"><span class="pre">|nu|</span> <span class="pre">&lt;=</span> <span class="pre">N</span></code>, as a dict keyed by the
+multi-index tuple (<code class="docutils literal notranslate"><span class="pre">D[(0,</span> <span class="pre">0)]</span></code> is <code class="docutils literal notranslate"><span class="pre">K(t)</span></code>, <code class="docutils literal notranslate"><span class="pre">D[(1,</span> <span class="pre">0)]</span></code> is <code class="docutils literal notranslate"><span class="pre">dK/dt_1</span></code>, …), or
+<code class="docutils literal notranslate"><span class="pre">None</span></code> when <code class="docutils literal notranslate"><span class="pre">t</span></code> is outside the domain.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.saddlepoint">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">saddlepoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.saddlepoint" title="Link to this definition">¶</a></dt>
+<dd><p>The saddlepoint <code class="docutils literal notranslate"><span class="pre">K'(tau)</span> <span class="pre">=</span> <span class="pre">x</span></code> by Newton’s method with backtracking (see
+<code class="xref py py-func docutils literal notranslate"><span class="pre">spa_saddle()</span></code>). Returns <code class="docutils literal notranslate"><span class="pre">(tau,</span> <span class="pre">info)</span></code>; for <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">1</span></code>,
+<code class="docutils literal notranslate"><span class="pre">x</span></code> may be a scalar and <code class="docutils literal notranslate"><span class="pre">tau</span></code> is then a scalar.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.tailprob">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">tailprob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.tailprob" title="Link to this definition">¶</a></dt>
+<dd><p>Saddlepoint expansions of orders <code class="docutils literal notranslate"><span class="pre">1..order</span></code> of the orthant probability <code class="docutils literal notranslate"><span class="pre">P(X</span> <span class="pre">&gt;=</span> <span class="pre">x)</span></code>
+(componentwise) for the random vector with cumulant generating function <code class="docutils literal notranslate"><span class="pre">K</span></code>.</p>
+<p>Returns a dict with <code class="docutils literal notranslate"><span class="pre">F</span></code> (array over the orders; <code class="docutils literal notranslate"><span class="pre">F[M-1]</span></code> keeps the terms of orders
+<code class="docutils literal notranslate"><span class="pre">n^(-m/2)</span></code>, <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">&lt;=</span> <span class="pre">2M-1</span></code>, and has relative error <code class="docutils literal notranslate"><span class="pre">O(n^-M)</span></code> uniformly for saddlepoints
+in compact subsets of the closed positive orthant, Theorem 1 of the paper; <code class="docutils literal notranslate"><span class="pre">F[0]</span></code> is the
+approximation of Kolassa (2003) in two or more dimensions), <code class="docutils literal notranslate"><span class="pre">tau</span></code> (the saddlepoint),
+<code class="docutils literal notranslate"><span class="pre">status</span></code> and <code class="docutils literal notranslate"><span class="pre">info</span></code> (the full result of the underlying routine).</p>
+<p><code class="docutils literal notranslate"><span class="pre">lower=True</span></code> gives <code class="docutils literal notranslate"><span class="pre">P(X</span> <span class="pre">&lt;=</span> <span class="pre">x)</span></code>, and <code class="docutils literal notranslate"><span class="pre">signs</span></code> (a vector of <code class="docutils literal notranslate"><span class="pre">+-1</span></code>) any mixed corner,
+e.g. <code class="docutils literal notranslate"><span class="pre">signs=[1,</span> <span class="pre">-1]</span></code> for <code class="docutils literal notranslate"><span class="pre">P(X1</span> <span class="pre">&gt;=</span> <span class="pre">x1,</span> <span class="pre">X2</span> <span class="pre">&lt;=</span> <span class="pre">x2)</span></code>. When the saddlepoint has negative
+components the expansion is applied through the inclusion-exclusion identity of the paper.
+In three dimensions the orthant integrals are computed by Gauss quadrature and in four or
+more by randomized quasi-Monte Carlo (<code class="docutils literal notranslate"><span class="pre">info['err']</span></code> is then a standard error); keyword
+arguments are passed to <code class="xref py py-func docutils literal notranslate"><span class="pre">spa_mv()</span></code> (<code class="docutils literal notranslate"><span class="pre">nG</span></code>,
+<code class="docutils literal notranslate"><span class="pre">nqmc</span></code>, …) and, for <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">2</span></code>, to
+<code class="xref py py-func docutils literal notranslate"><span class="pre">spa_orthant2()</span></code> (<code class="docutils literal notranslate"><span class="pre">nG</span></code>, <code class="docutils literal notranslate"><span class="pre">logscale</span></code>, …).
+For <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">1</span></code>, <code class="docutils literal notranslate"><span class="pre">x</span></code> may be a scalar.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.density">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.density" title="Link to this definition">¶</a></dt>
+<dd><p>Saddlepoint expansions of orders <code class="docutils literal notranslate"><span class="pre">1..order</span></code> of the density at <code class="docutils literal notranslate"><span class="pre">x</span></code> (Theorem 3 of the
+paper; Daniels’s expansion when <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">1</span></code>): <code class="docutils literal notranslate"><span class="pre">f[M-1]</span></code> keeps the terms <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">&lt;=</span> <span class="pre">M-1</span></code> and
+has relative error <code class="docutils literal notranslate"><span class="pre">O(n^-M)</span></code>. A finite sum of Hermite polynomials, no integration.
+Returns a dict with <code class="docutils literal notranslate"><span class="pre">f</span></code>, <code class="docutils literal notranslate"><span class="pre">tau</span></code>, <code class="docutils literal notranslate"><span class="pre">status</span></code> and <code class="docutils literal notranslate"><span class="pre">info</span></code>. In three or more dimensions
+the cancellation indicator <code class="docutils literal notranslate"><span class="pre">info['kappa_pdf']</span></code> should be checked at high orders (the
+Julia package repeats the computation in higher precision when it is large; this package
+works in double precision).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.ratio_density">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">ratio_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">general</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.ratio_density" title="Link to this definition">¶</a></dt>
+<dd><p>Saddlepoint expansions of orders <code class="docutils literal notranslate"><span class="pre">1..order</span></code> of the joint density at <code class="docutils literal notranslate"><span class="pre">r</span></code> of the
+vector of ratios <code class="docutils literal notranslate"><span class="pre">R</span> <span class="pre">=</span> <span class="pre">(X_1/Y_1,</span> <span class="pre">...,</span> <span class="pre">X_d/Y_d)</span></code>, <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">len(r)</span></code>, with positive denominators.
+<code class="docutils literal notranslate"><span class="pre">K</span></code> is the cgf of <code class="docutils literal notranslate"><span class="pre">(X_1..X_d,</span> <span class="pre">Y_1..Y_d)</span></code> (dimension <code class="docutils literal notranslate"><span class="pre">2d</span></code>) or, for a common denominator
+<code class="docutils literal notranslate"><span class="pre">Y</span></code>, of <code class="docutils literal notranslate"><span class="pre">(X_1..X_d,</span> <span class="pre">Y)</span></code> (dimension <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">+</span> <span class="pre">1</span></code>). For a scalar <code class="docutils literal notranslate"><span class="pre">r</span></code> (one ratio, <code class="docutils literal notranslate"><span class="pre">K</span></code> of
+dimension two) the expansion is the Rice expansion through the saddlepoint of
+<code class="docutils literal notranslate"><span class="pre">K_W(s)</span> <span class="pre">=</span> <span class="pre">K(s,</span> <span class="pre">-r</span> <span class="pre">s)</span></code> (Theorem 4 of the paper); for a vector it is Theorem 4 with the
+amplitude expansion of Corollary 1 in whitened coordinates, every Taylor coefficient taken
+from one Taylor polynomial of <code class="docutils literal notranslate"><span class="pre">K(s,</span> <span class="pre">-r*s</span> <span class="pre">+</span> <span class="pre">tau)</span></code> (<code class="xref py py-func docutils literal notranslate"><span class="pre">ratio_mv()</span></code>).
+<code class="docutils literal notranslate"><span class="pre">general=True</span></code> uses the vector code also for <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">1</span></code>. Returns a dict with <code class="docutils literal notranslate"><span class="pre">f</span></code>,
+<code class="docutils literal notranslate"><span class="pre">shat</span></code>, <code class="docutils literal notranslate"><span class="pre">status</span></code> and <code class="docutils literal notranslate"><span class="pre">info</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.ratio_tailprob">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">ratio_tailprob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.ratio_tailprob" title="Link to this definition">¶</a></dt>
+<dd><p>Saddlepoint expansions of orders <code class="docutils literal notranslate"><span class="pre">1..order</span></code> of <code class="docutils literal notranslate"><span class="pre">P(R</span> <span class="pre">&gt;=</span> <span class="pre">r)</span></code> for the vector of ratios
+<code class="docutils literal notranslate"><span class="pre">R</span> <span class="pre">=</span> <span class="pre">(X_1/Y_1,</span> <span class="pre">...,</span> <span class="pre">X_d/Y_d)</span></code> with positive denominators (<code class="docutils literal notranslate"><span class="pre">K</span></code> as in
+<a class="reference internal" href="#saddlepoint_expansions.ratio_density" title="saddlepoint_expansions.ratio_density"><code class="xref py py-func docutils literal notranslate"><span class="pre">ratio_density()</span></code></a>; a scalar <code class="docutils literal notranslate"><span class="pre">r</span></code> for one ratio): the probability equals <code class="docutils literal notranslate"><span class="pre">P(W</span> <span class="pre">&gt;=</span> <span class="pre">0)</span></code>
+for <code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">=</span> <span class="pre">X</span> <span class="pre">-</span> <span class="pre">r*Y</span></code>, and <a class="reference internal" href="#saddlepoint_expansions.tailprob" title="saddlepoint_expansions.tailprob"><code class="xref py py-func docutils literal notranslate"><span class="pre">tailprob()</span></code></a> is applied to <code class="docutils literal notranslate"><span class="pre">W</span></code> at <code class="docutils literal notranslate"><span class="pre">0</span></code> (Theorem 4 of the
+paper). <code class="docutils literal notranslate"><span class="pre">lower=True</span></code> gives <code class="docutils literal notranslate"><span class="pre">P(R</span> <span class="pre">&lt;=</span> <span class="pre">r)</span></code>, <code class="docutils literal notranslate"><span class="pre">signs</span></code> a mixed corner, and the other keyword
+arguments are passed to <code class="docutils literal notranslate"><span class="pre">tailprob</span></code>. Returns a dict with <code class="docutils literal notranslate"><span class="pre">F</span></code>, <code class="docutils literal notranslate"><span class="pre">shat</span></code>, <code class="docutils literal notranslate"><span class="pre">status</span></code> and
+<code class="docutils literal notranslate"><span class="pre">info</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.studentized_density">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">studentized_density</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saddle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.studentized_density" title="Link to this definition">¶</a></dt>
+<dd><p>Saddlepoint expansions of orders <code class="docutils literal notranslate"><span class="pre">1..order</span></code> of the density at <code class="docutils literal notranslate"><span class="pre">q</span></code> of
+<code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">=</span> <span class="pre">X/sqrt(Y)</span></code>, <code class="docutils literal notranslate"><span class="pre">Y</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>, from the joint cumulant generating function <code class="docutils literal notranslate"><span class="pre">K</span></code> of
+<code class="docutils literal notranslate"><span class="pre">(X,</span> <span class="pre">Y)</span></code> (Theorem 2 of Bao, Broda and Kan): <code class="docutils literal notranslate"><span class="pre">f[M-1]</span></code> keeps the terms <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">&lt;=</span> <span class="pre">M-1</span></code> of
+the expansion in powers of <code class="docutils literal notranslate"><span class="pre">n^-1</span></code> and has relative error <code class="docutils literal notranslate"><span class="pre">O(n^-M)</span></code> (the “n” is absorbed
+in <code class="docutils literal notranslate"><span class="pre">K</span></code>, see <a class="reference internal" href="#saddlepoint_expansions.sample_mean" title="saddlepoint_expansions.sample_mean"><code class="xref py py-func docutils literal notranslate"><span class="pre">sample_mean()</span></code></a>). With
+<code class="docutils literal notranslate"><span class="pre">psi(s,</span> <span class="pre">t)</span> <span class="pre">=</span> <span class="pre">K(s,</span> <span class="pre">t)</span> <span class="pre">+</span> <span class="pre">q^2</span> <span class="pre">s^2/(4t)</span></code> and the saddlepoint of
+<a class="reference internal" href="#saddlepoint_expansions.studentized_saddlepoint" title="saddlepoint_expansions.studentized_saddlepoint"><code class="xref py py-func docutils literal notranslate"><span class="pre">studentized_saddlepoint()</span></code></a>, <code class="docutils literal notranslate"><span class="pre">f(q)</span> <span class="pre">~</span> <span class="pre">vhat^2</span> <span class="pre">exp(psi)</span> <span class="pre">/</span> <span class="pre">(sqrt(pi)</span> <span class="pre">{that</span> <span class="pre">|psi''|}^(1/2))</span>
+<span class="pre">{1</span> <span class="pre">+</span> <span class="pre">sum_m</span> <span class="pre">b_m(h_0)</span> <span class="pre">+</span> <span class="pre">b_{m-1}(h_1)}</span></code>, the amplitude expansion of a bivariate integral
+with amplitude <code class="docutils literal notranslate"><span class="pre">(s/shat)^2</span> <span class="pre">(t/that)^(-5/2)</span> <span class="pre">+</span> <span class="pre">(t/that)^(-3/2)/(2</span> <span class="pre">that</span> <span class="pre">vhat^2)</span></code>; the Hessian
+is indefinite where <code class="docutils literal notranslate"><span class="pre">that</span> <span class="pre">&lt;</span> <span class="pre">0</span></code> and the Hermite moments are evaluated in the coordinates
+of a complex factorization <code class="docutils literal notranslate"><span class="pre">psi''</span> <span class="pre">=</span> <span class="pre">L</span> <span class="pre">L'</span></code>. The terms of high order cancel by many orders of
+magnitude when <code class="docutils literal notranslate"><span class="pre">|that|</span></code> is large: <code class="docutils literal notranslate"><span class="pre">info[&quot;kappa&quot;]</span></code> is the cancellation indicator, and in
+double precision the terms beyond the fourth are often not reliable (the Julia package
+repeats the computation in higher precision; <code class="docutils literal notranslate"><span class="pre">status</span></code> reports <code class="docutils literal notranslate"><span class="pre">&quot;coefficients</span>
+<span class="pre">inaccurate&quot;</span></code> when <code class="docutils literal notranslate"><span class="pre">kappa</span></code> exceeds <code class="docutils literal notranslate"><span class="pre">1e10</span></code>). <code class="docutils literal notranslate"><span class="pre">saddle</span></code> may supply the saddlepoint (a dict
+with <code class="docutils literal notranslate"><span class="pre">s</span></code>, <code class="docutils literal notranslate"><span class="pre">t</span></code>, <code class="docutils literal notranslate"><span class="pre">v</span></code>). Returns a dict with <code class="docutils literal notranslate"><span class="pre">f</span></code>, <code class="docutils literal notranslate"><span class="pre">saddle</span></code>, <code class="docutils literal notranslate"><span class="pre">status</span></code> and <code class="docutils literal notranslate"><span class="pre">info</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.studentized_tailprob">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">studentized_tailprob</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lower</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">saddle</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.studentized_tailprob" title="Link to this definition">¶</a></dt>
+<dd><p>Saddlepoint expansions of orders <code class="docutils literal notranslate"><span class="pre">1..order</span></code> of <code class="docutils literal notranslate"><span class="pre">P(Q</span> <span class="pre">&gt;=</span> <span class="pre">q)</span></code> for <code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">=</span> <span class="pre">X/sqrt(Y)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Y</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>, from the joint cumulant generating function <code class="docutils literal notranslate"><span class="pre">K</span></code> of <code class="docutils literal notranslate"><span class="pre">(X,</span> <span class="pre">Y)</span></code> (Theorem 3 of Bao,
+Broda and Kan): <code class="docutils literal notranslate"><span class="pre">F[M-1]</span></code> keeps the terms of orders <code class="docutils literal notranslate"><span class="pre">n^(-m/2)</span></code>, <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">&lt;=</span> <span class="pre">2M-1</span></code>, and has
+relative error <code class="docutils literal notranslate"><span class="pre">O(n^-M)</span></code>; <code class="docutils literal notranslate"><span class="pre">info[&quot;Fp&quot;][j]</span></code>, <code class="docutils literal notranslate"><span class="pre">j</span> <span class="pre">=</span> <span class="pre">0..2M-1</span></code>, are the expansions with the
+terms up to <code class="docutils literal notranslate"><span class="pre">n^(-j/2)</span></code>. <code class="docutils literal notranslate"><span class="pre">lower=True</span></code> gives <code class="docutils literal notranslate"><span class="pre">P(Q</span> <span class="pre">&lt;=</span> <span class="pre">q)</span></code>. The expansion is of
+Hauschildt-Robinson type in <code class="docutils literal notranslate"><span class="pre">s</span></code> after the <code class="docutils literal notranslate"><span class="pre">t</span></code>-integral is expanded by Laplace’s method:
+with <code class="docutils literal notranslate"><span class="pre">Psi(s)</span> <span class="pre">=</span> <span class="pre">psi(s,</span> <span class="pre">t(s))</span></code>, <code class="docutils literal notranslate"><span class="pre">psi_t(s,</span> <span class="pre">t(s))</span> <span class="pre">=</span> <span class="pre">0</span></code>, the leading term is
+<code class="docutils literal notranslate"><span class="pre">E_n</span> <span class="pre">{H_0(shat)</span> <span class="pre">Phibar(uhat)</span> <span class="pre">+</span> <span class="pre">...}</span></code>, and all Taylor coefficients of <code class="docutils literal notranslate"><span class="pre">Psi</span></code> and of the
+amplitudes <code class="docutils literal notranslate"><span class="pre">H_k</span></code> at <code class="docutils literal notranslate"><span class="pre">shat</span></code> are obtained from the Taylor polynomial of <code class="docutils literal notranslate"><span class="pre">K</span></code> by Newton’s
+method and composition on power series, exact to rounding. <code class="docutils literal notranslate"><span class="pre">saddle</span></code> may supply the
+saddlepoint; <code class="docutils literal notranslate"><span class="pre">info[&quot;kappa&quot;]</span></code> is the cancellation indicator. Returns a dict with <code class="docutils literal notranslate"><span class="pre">F</span></code>,
+<code class="docutils literal notranslate"><span class="pre">saddle</span></code>, <code class="docutils literal notranslate"><span class="pre">status</span></code> and <code class="docutils literal notranslate"><span class="pre">info</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.studentized_quantile">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">studentized_quantile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">prob</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">3</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-10</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.studentized_quantile" title="Link to this definition">¶</a></dt>
+<dd><p>The quantile of the saddlepoint distribution function of order <code class="docutils literal notranslate"><span class="pre">order</span></code>
+(<a class="reference internal" href="#saddlepoint_expansions.studentized_tailprob" title="saddlepoint_expansions.studentized_tailprob"><code class="xref py py-func docutils literal notranslate"><span class="pre">studentized_tailprob()</span></code></a> with <code class="docutils literal notranslate"><span class="pre">lower=True</span></code>): <code class="docutils literal notranslate"><span class="pre">P(Q</span> <span class="pre">&lt;=</span> <span class="pre">q)</span> <span class="pre">=</span> <span class="pre">prob</span></code>. The search runs
+over <code class="docutils literal notranslate"><span class="pre">shat</span></code> along the saddlepoint locus (<a class="reference internal" href="#saddlepoint_expansions.studentized_locus" title="saddlepoint_expansions.studentized_locus"><code class="xref py py-func docutils literal notranslate"><span class="pre">studentized_locus()</span></code></a>), where each trial point
+gives its <code class="docutils literal notranslate"><span class="pre">q</span></code> and its distribution function directly, so that no saddlepoint equation is
+solved: a bracket in <code class="docutils literal notranslate"><span class="pre">shat</span></code> from the origin, then the Illinois iteration. Returns a dict
+with <code class="docutils literal notranslate"><span class="pre">q</span></code> and <code class="docutils literal notranslate"><span class="pre">saddle</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.studentized_saddlepoint">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">studentized_saddlepoint</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">q</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.studentized_saddlepoint" title="Link to this definition">¶</a></dt>
+<dd><p>The saddlepoint <code class="docutils literal notranslate"><span class="pre">(shat,</span> <span class="pre">that,</span> <span class="pre">vhat)</span></code> of the expansions for <code class="docutils literal notranslate"><span class="pre">Q</span> <span class="pre">=</span> <span class="pre">X/sqrt(Y)</span></code> at <code class="docutils literal notranslate"><span class="pre">q</span></code>:
+the root of <code class="docutils literal notranslate"><span class="pre">K_s</span> <span class="pre">=</span> <span class="pre">q</span> <span class="pre">v</span></code>, <code class="docutils literal notranslate"><span class="pre">K_t</span> <span class="pre">=</span> <span class="pre">v^2</span></code>, <code class="docutils literal notranslate"><span class="pre">q</span> <span class="pre">s</span> <span class="pre">+</span> <span class="pre">2</span> <span class="pre">t</span> <span class="pre">v</span> <span class="pre">=</span> <span class="pre">0</span></code> with <code class="docutils literal notranslate"><span class="pre">vhat</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>, for the
+joint cumulant generating function <code class="docutils literal notranslate"><span class="pre">K</span></code> of <code class="docutils literal notranslate"><span class="pre">(X,</span> <span class="pre">Y)</span></code>, <code class="docutils literal notranslate"><span class="pre">Y</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>, by Newton’s method with
+continuation in <code class="docutils literal notranslate"><span class="pre">q</span></code> from <code class="docutils literal notranslate"><span class="pre">q0</span> <span class="pre">=</span> <span class="pre">E(X)/sqrt(E(Y))</span></code>, where <code class="docutils literal notranslate"><span class="pre">shat</span> <span class="pre">=</span> <span class="pre">that</span> <span class="pre">=</span> <span class="pre">0</span></code>. Returns a
+dict with <code class="docutils literal notranslate"><span class="pre">s</span></code>, <code class="docutils literal notranslate"><span class="pre">t</span></code>, <code class="docutils literal notranslate"><span class="pre">v</span></code> and <code class="docutils literal notranslate"><span class="pre">q0</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.studentized_locus">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">studentized_locus</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">s</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tguess</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-14</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxit</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">60</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.studentized_locus" title="Link to this definition">¶</a></dt>
+<dd><p>The point of the saddlepoint locus <code class="docutils literal notranslate"><span class="pre">s</span> <span class="pre">K_s</span> <span class="pre">+</span> <span class="pre">2</span> <span class="pre">t</span> <span class="pre">K_t</span> <span class="pre">=</span> <span class="pre">0</span></code> with abscissa <code class="docutils literal notranslate"><span class="pre">s</span></code>, by
+Newton’s method in <code class="docutils literal notranslate"><span class="pre">t</span></code> from <code class="docutils literal notranslate"><span class="pre">tguess</span></code>; returns a dict with <code class="docutils literal notranslate"><span class="pre">t</span></code>, <code class="docutils literal notranslate"><span class="pre">v</span> <span class="pre">=</span> <span class="pre">sqrt(K_t)</span></code> and
+the value <code class="docutils literal notranslate"><span class="pre">q</span> <span class="pre">=</span> <span class="pre">K_s/v</span></code> whose saddlepoint it is. The saddlepoints for all <code class="docutils literal notranslate"><span class="pre">q</span></code> lie on this
+curve through the origin, so that a value of <code class="docutils literal notranslate"><span class="pre">shat</span></code> determines the saddlepoint and <code class="docutils literal notranslate"><span class="pre">q</span></code>
+without solving the three equations; <a class="reference internal" href="#saddlepoint_expansions.studentized_quantile" title="saddlepoint_expansions.studentized_quantile"><code class="xref py py-func docutils literal notranslate"><span class="pre">studentized_quantile()</span></code></a> searches along it.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.reflect">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">reflect</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">signs</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.reflect" title="Link to this definition">¶</a></dt>
+<dd><p>Cumulant generating function of <code class="docutils literal notranslate"><span class="pre">(s_1</span> <span class="pre">X_1,</span> <span class="pre">...,</span> <span class="pre">s_d</span> <span class="pre">X_d)</span></code> for signs <code class="docutils literal notranslate"><span class="pre">+-1</span></code>:
+<code class="docutils literal notranslate"><span class="pre">K(s</span> <span class="pre">*</span> <span class="pre">t)</span></code>. <code class="docutils literal notranslate"><span class="pre">reflect(K)</span></code> negates every component.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.marginal">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">marginal</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">idx</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.marginal" title="Link to this definition">¶</a></dt>
+<dd><p>Cumulant generating function of the components <code class="docutils literal notranslate"><span class="pre">idx</span></code> of <code class="docutils literal notranslate"><span class="pre">X</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.linear_combination">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">linear_combination</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">B</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.linear_combination" title="Link to this definition">¶</a></dt>
+<dd><p>Cumulant generating function of <code class="docutils literal notranslate"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">B'X</span></code> for a <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">x</span> <span class="pre">k</span></code> matrix <code class="docutils literal notranslate"><span class="pre">B</span></code>: <code class="docutils literal notranslate"><span class="pre">K(B</span> <span class="pre">u)</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.sample_mean">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">sample_mean</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.sample_mean" title="Link to this definition">¶</a></dt>
+<dd><p>Cumulant generating function of the mean of <code class="docutils literal notranslate"><span class="pre">n</span></code> independent copies: <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">K(t/n)</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.shift">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">shift</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.shift" title="Link to this definition">¶</a></dt>
+<dd><p>Cumulant generating function of <code class="docutils literal notranslate"><span class="pre">X</span> <span class="pre">+</span> <span class="pre">c</span></code>: <code class="docutils literal notranslate"><span class="pre">K(t)</span> <span class="pre">+</span> <span class="pre">c't</span></code>.</p>
+</dd></dl>
+
+</section>
+<section id="module-saddlepoint_expansions.cgfs">
+<span id="library-of-cumulant-generating-functions"></span><h2>Library of cumulant generating functions<a class="headerlink" href="#module-saddlepoint_expansions.cgfs" title="Link to this heading">¶</a></h2>
+<p>A library of cumulant generating functions, written generically for Taylor-mode
+differentiation.</p>
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.cgfs.normal_cgf">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.cgfs.</span></span><span class="sig-name descname"><span class="pre">normal_cgf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">mu</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Sigma</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.cgfs.normal_cgf" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">N(mu,</span> <span class="pre">Sigma)</span></code>: <code class="docutils literal notranslate"><span class="pre">K(t)</span> <span class="pre">=</span> <span class="pre">mu't</span> <span class="pre">+</span> <span class="pre">t'Sigma</span> <span class="pre">t/2</span></code>. The expansions are exact at order one.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.cgfs.gamma_cgf">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.cgfs.</span></span><span class="sig-name descname"><span class="pre">gamma_cgf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.cgfs.gamma_cgf" title="Link to this definition">¶</a></dt>
+<dd><p>Gamma distribution with shape <code class="docutils literal notranslate"><span class="pre">a</span></code> and scale <code class="docutils literal notranslate"><span class="pre">b</span></code> (mean <code class="docutils literal notranslate"><span class="pre">ab</span></code>): <code class="docutils literal notranslate"><span class="pre">K(t)</span> <span class="pre">=</span> <span class="pre">-a</span> <span class="pre">log(1</span> <span class="pre">-</span> <span class="pre">bt)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">&lt;</span> <span class="pre">1/b</span></code>. <code class="docutils literal notranslate"><span class="pre">gamma_cgf(1,</span> <span class="pre">b)</span></code> is the exponential distribution with mean <code class="docutils literal notranslate"><span class="pre">b</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.cgfs.ncx2_cgf">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.cgfs.</span></span><span class="sig-name descname"><span class="pre">ncx2_cgf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.cgfs.ncx2_cgf" title="Link to this definition">¶</a></dt>
+<dd><p>Noncentral chi-squared <code class="docutils literal notranslate"><span class="pre">chi^2_m(lam)</span></code>: <code class="docutils literal notranslate"><span class="pre">K(t)</span> <span class="pre">=</span> <span class="pre">-(m/2)</span> <span class="pre">log(1</span> <span class="pre">-</span> <span class="pre">2t)</span> <span class="pre">+</span> <span class="pre">lam</span> <span class="pre">t/(1</span> <span class="pre">-</span> <span class="pre">2t)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">&lt;</span> <span class="pre">1/2</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.cgfs.exponential_sums_cgf">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.cgfs.</span></span><span class="sig-name descname"><span class="pre">exponential_sums_cgf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">A</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.cgfs.exponential_sums_cgf" title="Link to this definition">¶</a></dt>
+<dd><p>The mean of <code class="docutils literal notranslate"><span class="pre">n</span></code> independent copies of <code class="docutils literal notranslate"><span class="pre">A'U</span> <span class="pre">+</span> <span class="pre">l</span></code>, <code class="docutils literal notranslate"><span class="pre">U</span></code> a vector of independent unit
+exponential variables, <code class="docutils literal notranslate"><span class="pre">A</span></code> an <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">x</span> <span class="pre">d</span></code> matrix and <code class="docutils literal notranslate"><span class="pre">shift</span> <span class="pre">=</span> <span class="pre">l</span></code> (default 0):
+<code class="docutils literal notranslate"><span class="pre">K(t)</span> <span class="pre">=</span> <span class="pre">-n</span> <span class="pre">sum_i</span> <span class="pre">log(1</span> <span class="pre">-</span> <span class="pre">a_i't/n)</span> <span class="pre">+</span> <span class="pre">l't</span></code>, domain <code class="docutils literal notranslate"><span class="pre">a_i't</span> <span class="pre">&lt;</span> <span class="pre">n</span></code>. With <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">=</span> <span class="pre">1</span></code> this is
+the cumulant generating function of <code class="docutils literal notranslate"><span class="pre">A'U</span> <span class="pre">+</span> <span class="pre">l</span></code> itself (the examples of Wang 1990 and
+Kolassa and Li 2010 in the paper).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.cgfs.quadratic_forms_cgf">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.cgfs.</span></span><span class="sig-name descname"><span class="pre">quadratic_forms_cgf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Mats</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Sigma</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">mu</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">scale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">closedform</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">True</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.cgfs.quadratic_forms_cgf" title="Link to this definition">¶</a></dt>
+<dd><p>Joint cumulant generating function of the quadratic forms <code class="docutils literal notranslate"><span class="pre">Q_i</span> <span class="pre">=</span> <span class="pre">z'A_i</span> <span class="pre">z</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Mats</span> <span class="pre">=</span> <span class="pre">[A_1,</span> <span class="pre">...,</span> <span class="pre">A_d]</span></code> (symmetric <code class="docutils literal notranslate"><span class="pre">p</span> <span class="pre">x</span> <span class="pre">p</span></code>), in <code class="docutils literal notranslate"><span class="pre">z</span> <span class="pre">~</span> <span class="pre">N(mu,</span> <span class="pre">Sigma)</span></code> (default standard
+normal): <code class="docutils literal notranslate"><span class="pre">K(t)</span> <span class="pre">=</span> <span class="pre">-1/2</span> <span class="pre">log</span> <span class="pre">det(I</span> <span class="pre">-</span> <span class="pre">2C)</span> <span class="pre">+</span> <span class="pre">nu'C(I</span> <span class="pre">-</span> <span class="pre">2C)^-1</span> <span class="pre">nu</span></code>, <code class="docutils literal notranslate"><span class="pre">C</span> <span class="pre">=</span> <span class="pre">sum_i</span> <span class="pre">t_i</span> <span class="pre">S^1/2</span> <span class="pre">A_i</span> <span class="pre">S^1/2</span></code>,
+<code class="docutils literal notranslate"><span class="pre">nu</span> <span class="pre">=</span> <span class="pre">S^-1/2</span> <span class="pre">mu</span></code>, multiplied by <code class="docutils literal notranslate"><span class="pre">scale</span></code> (the sum of <code class="docutils literal notranslate"><span class="pre">scale</span></code> independent copies when
+<code class="docutils literal notranslate"><span class="pre">scale</span></code> is an integer). The domain is where <code class="docutils literal notranslate"><span class="pre">I</span> <span class="pre">-</span> <span class="pre">2C</span></code> is positive definite. The
+determinant and the solve use a Cholesky factorization in generic arithmetic; the cost of
+one evaluation with derivatives is about <code class="docutils literal notranslate"><span class="pre">p^3/6</span></code> polynomial products, so this is for
+small and moderate <code class="docutils literal notranslate"><span class="pre">p</span></code>. With <code class="docutils literal notranslate"><span class="pre">closedform=True</span></code> (the default) the Taylor polynomials,
+including the whitened ones, are instead computed in closed form by the trace recursion of
+the paper in the whitened directions (the <code class="docutils literal notranslate"><span class="pre">taylor</span></code> option of
+<a class="reference internal" href="#saddlepoint_expansions.CGF" title="saddlepoint_expansions.CGF"><code class="xref py py-class docutils literal notranslate"><span class="pre">CGF</span></code></a>), so that large <code class="docutils literal notranslate"><span class="pre">p</span></code> costs matrix products rather than
+polynomial products; <code class="docutils literal notranslate"><span class="pre">closedform=False</span></code> differentiates the generic formula.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.cgfs.wishart_diag_cgf">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.cgfs.</span></span><span class="sig-name descname"><span class="pre">wishart_diag_cgf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">V</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">n</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.cgfs.wishart_diag_cgf" title="Link to this definition">¶</a></dt>
+<dd><p>The diagonal of a Wishart matrix <code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">~</span> <span class="pre">W_d(n,</span> <span class="pre">V)</span></code>: <code class="docutils literal notranslate"><span class="pre">d</span></code> quadratic forms <code class="docutils literal notranslate"><span class="pre">z'e_i</span> <span class="pre">e_i'z</span></code>
+in <code class="docutils literal notranslate"><span class="pre">z</span> <span class="pre">~</span> <span class="pre">N(0,</span> <span class="pre">V)</span></code>, summed over <code class="docutils literal notranslate"><span class="pre">n</span></code> independent copies (<a class="reference internal" href="#saddlepoint_expansions.cgfs.quadratic_forms_cgf" title="saddlepoint_expansions.cgfs.quadratic_forms_cgf"><code class="xref py py-func docutils literal notranslate"><span class="pre">quadratic_forms_cgf()</span></code></a> with
+<code class="docutils literal notranslate"><span class="pre">scale</span> <span class="pre">=</span> <span class="pre">n</span></code>).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.cgfs.common_component_cgf">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.cgfs.</span></span><span class="sig-name descname"><span class="pre">common_component_cgf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">m</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lam</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.cgfs.common_component_cgf" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">Q_j</span> <span class="pre">=</span> <span class="pre">X_j</span> <span class="pre">+</span> <span class="pre">X_0</span></code>, <code class="docutils literal notranslate"><span class="pre">j</span> <span class="pre">=</span> <span class="pre">1..d</span></code>, with independent <code class="docutils literal notranslate"><span class="pre">X_i</span> <span class="pre">~</span> <span class="pre">chi^2_{m_i}(lam_i)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">=</span> <span class="pre">[m_1,</span> <span class="pre">...,</span> <span class="pre">m_d,</span> <span class="pre">m_0]</span></code> and <code class="docutils literal notranslate"><span class="pre">lam</span></code> likewise: <code class="docutils literal notranslate"><span class="pre">K(t)</span> <span class="pre">=</span> <span class="pre">sum_j</span> <span class="pre">K_j(t_j)</span> <span class="pre">+</span> <span class="pre">K_0(sum_j</span> <span class="pre">t_j)</span></code>
+(the pairs of quadratic forms of the paper, and the trivariate example).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.cgfs.uniform_cgf">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.cgfs.</span></span><span class="sig-name descname"><span class="pre">uniform_cgf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">a</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">b</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.cgfs.uniform_cgf" title="Link to this definition">¶</a></dt>
+<dd><p>Uniform distribution on <code class="docutils literal notranslate"><span class="pre">[a,</span> <span class="pre">b]</span></code>: <code class="docutils literal notranslate"><span class="pre">K(t)</span> <span class="pre">=</span> <span class="pre">log</span> <span class="pre">sinhc((b</span> <span class="pre">-</span> <span class="pre">a)t/2)</span> <span class="pre">+</span> <span class="pre">(a</span> <span class="pre">+</span> <span class="pre">b)t/2</span></code>, with
+<code class="docutils literal notranslate"><span class="pre">sinhc(x)</span> <span class="pre">=</span> <span class="pre">sinh(x)/x</span></code> (<a class="reference internal" href="#saddlepoint_expansions.taylor.sinhc" title="saddlepoint_expansions.taylor.sinhc"><code class="xref py py-func docutils literal notranslate"><span class="pre">sinhc()</span></code></a>, which handles the
+removable singularity at <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">=</span> <span class="pre">0</span></code>, where the saddlepoint iteration starts). Finite for all
+<code class="docutils literal notranslate"><span class="pre">t</span></code>.</p>
+</dd></dl>
+
+</section>
+<section id="the-derivative-interface">
+<h2>The derivative interface<a class="headerlink" href="#the-derivative-interface" title="Link to this heading">¶</a></h2>
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.spa_saddle">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">spa_saddle</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Kfun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.spa_saddle" title="Link to this definition">¶</a></dt>
+<dd><p>Saddlepoint <code class="docutils literal notranslate"><span class="pre">K'(tau)</span> <span class="pre">=</span> <span class="pre">x</span></code> in any dimension: Newton’s method with backtracking on the
+convex objective <code class="docutils literal notranslate"><span class="pre">K(tau)</span> <span class="pre">-</span> <span class="pre">tau'x</span></code>, convergence measured by the Newton decrement (see the
+Julia package for the stopping rules). A step is rejected when the objective falls below its
+tangent plane at the current iterate, when the directional derivative decreases along the
+step, or when the midpoint of the step is outside the domain: on the strip the objective is
+convex, so it lies above its tangent plane and its gradient is monotone, and a violation
+means the step crossed a pole of K into a region where its formula happens to be finite
+(<code class="docutils literal notranslate"><span class="pre">-log|1</span> <span class="pre">-</span> <span class="pre">t|</span></code> beyond <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">=</span> <span class="pre">1</span></code>, where the derivative changes sign). Necessary conditions,
+which protect cumulant generating functions given without a domain predicate in the usual
+cases; the predicate remains the safe way. <code class="docutils literal notranslate"><span class="pre">Kfun(nu,</span> <span class="pre">t)</span></code> returns the derivative of order
+<code class="docutils literal notranslate"><span class="pre">nu</span></code> (a tuple) at <code class="docutils literal notranslate"><span class="pre">t</span></code>, NaN outside the domain. Returns <code class="docutils literal notranslate"><span class="pre">(tau,</span> <span class="pre">info)</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.spa_uni">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">spa_uni</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Kd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">xbar</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">uthr</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.5</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.spa_uni" title="Link to this definition">¶</a></dt>
+<dd><p>Saddlepoint approximations of orders <code class="docutils literal notranslate"><span class="pre">1..order</span></code> of the density and the distribution
+function of a scalar variable at <code class="docutils literal notranslate"><span class="pre">xbar</span></code> from the derivatives of its cumulant generating
+function at the saddlepoint: <code class="docutils literal notranslate"><span class="pre">Kd[k]</span> <span class="pre">=</span> <span class="pre">K^(k)(shat)</span></code>, <code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">=</span> <span class="pre">0..2*order+1</span></code>.</p>
+<p>Returns a dict with <code class="docutils literal notranslate"><span class="pre">pdf</span></code> (Daniels expansion with the terms <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">&lt;=</span> <span class="pre">M-1</span></code>), <code class="docutils literal notranslate"><span class="pre">cdf</span></code>
+(Hauschildt-Robinson expansion of <code class="docutils literal notranslate"><span class="pre">P(X</span> <span class="pre">&lt;=</span> <span class="pre">xbar)</span></code> with the terms <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">&lt;=</span> <span class="pre">2M-1</span></code>), <code class="docutils literal notranslate"><span class="pre">upp</span></code>
+(the same expansion of <code class="docutils literal notranslate"><span class="pre">P(X</span> <span class="pre">&gt;</span> <span class="pre">xbar)</span></code>, computed directly) and <code class="docutils literal notranslate"><span class="pre">kappa</span></code> (cancellation
+indicator), each an array over the orders. Both signs of <code class="docutils literal notranslate"><span class="pre">shat</span></code> are handled. The integrals
+<code class="docutils literal notranslate"><span class="pre">I_m(u)</span></code>, <code class="docutils literal notranslate"><span class="pre">u</span> <span class="pre">=</span> <span class="pre">shat</span> <span class="pre">K''^(1/2)</span></code>, are generated by the forward recursion for <code class="docutils literal notranslate"><span class="pre">|u|</span> <span class="pre">&lt;=</span> <span class="pre">uthr</span></code>
+and by 80-point Gauss-Hermite quadrature otherwise.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.spa_ratio_pdf">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">spa_ratio_pdf</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">KWd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">gd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">shat</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.spa_ratio_pdf" title="Link to this definition">¶</a></dt>
+<dd><p>Rice (Laplace) expansion of orders <code class="docutils literal notranslate"><span class="pre">1..order</span></code> of <code class="docutils literal notranslate"><span class="pre">(2</span> <span class="pre">pi</span> <span class="pre">i)^-1</span> <span class="pre">int</span> <span class="pre">exp{K_W(s)}</span> <span class="pre">g(s)</span> <span class="pre">ds</span></code>
+through the saddlepoint <code class="docutils literal notranslate"><span class="pre">shat</span></code> of <code class="docutils literal notranslate"><span class="pre">K_W</span></code> (<code class="docutils literal notranslate"><span class="pre">K_W'(shat)</span> <span class="pre">=</span> <span class="pre">0</span></code>): <code class="docutils literal notranslate"><span class="pre">KWd[k]</span> <span class="pre">=</span> <span class="pre">K_W^(k)(shat)</span></code>,
+<code class="docutils literal notranslate"><span class="pre">k</span> <span class="pre">=</span> <span class="pre">0..2*order</span></code>, and <code class="docutils literal notranslate"><span class="pre">gd[l]</span> <span class="pre">=</span> <span class="pre">g^(l)(shat)</span></code>, <code class="docutils literal notranslate"><span class="pre">l</span> <span class="pre">=</span> <span class="pre">0..2*order-2</span></code>. For the density of
+<code class="docutils literal notranslate"><span class="pre">R</span> <span class="pre">=</span> <span class="pre">X/Y</span></code> at <code class="docutils literal notranslate"><span class="pre">r</span></code> with <code class="docutils literal notranslate"><span class="pre">Y</span> <span class="pre">&gt;</span> <span class="pre">0</span></code> and joint cumulant generating function <code class="docutils literal notranslate"><span class="pre">K(s,</span> <span class="pre">t)</span></code>, take
+<code class="docutils literal notranslate"><span class="pre">K_W(s)</span> <span class="pre">=</span> <span class="pre">K(s,</span> <span class="pre">-r</span> <span class="pre">s)</span></code> and <code class="docutils literal notranslate"><span class="pre">g(s)</span> <span class="pre">=</span> <span class="pre">dK/dt</span></code> at <code class="docutils literal notranslate"><span class="pre">t</span> <span class="pre">=</span> <span class="pre">-r</span> <span class="pre">s</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.spa_bi">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">spa_bi</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Kfun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nG</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Kwhite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direct</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nGmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.spa_bi" title="Link to this definition">¶</a></dt>
+<dd><p>Bivariate saddlepoint approximations of orders <code class="docutils literal notranslate"><span class="pre">1..order</span></code> at <code class="docutils literal notranslate"><span class="pre">x</span> <span class="pre">=</span> <span class="pre">[x1,</span> <span class="pre">x2]</span></code> from
+<code class="docutils literal notranslate"><span class="pre">Kfun(nu,</span> <span class="pre">t)</span></code>, the derivative of order <code class="docutils literal notranslate"><span class="pre">nu</span></code> (a tuple) of the cumulant generating
+function at <code class="docutils literal notranslate"><span class="pre">t</span></code> (NaN outside the domain). See <a class="reference internal" href="#saddlepoint_expansions.spa_bi_at" title="saddlepoint_expansions.spa_bi_at"><code class="xref py py-func docutils literal notranslate"><span class="pre">spa_bi_at()</span></code></a> for the result and the
+keywords; <code class="docutils literal notranslate"><span class="pre">Kwhite(nu,</span> <span class="pre">u,</span> <span class="pre">T)</span></code> optionally returns the derivatives of <code class="docutils literal notranslate"><span class="pre">K_Y(u)</span> <span class="pre">=</span> <span class="pre">K(T</span> <span class="pre">u)</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.spa_bi_at">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">spa_bi_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Kd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nG</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Kwhite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">direct</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">False</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nGmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.spa_bi_at" title="Link to this definition">¶</a></dt>
+<dd><p>The bivariate expansions from the derivatives at the saddlepoint <code class="docutils literal notranslate"><span class="pre">tau</span></code>:
+<code class="docutils literal notranslate"><span class="pre">Kd[n1,</span> <span class="pre">n2]</span> <span class="pre">=</span> <span class="pre">K^(n1,n2)(tau)</span></code>, <code class="docutils literal notranslate"><span class="pre">n1</span> <span class="pre">+</span> <span class="pre">n2</span> <span class="pre">&lt;=</span> <span class="pre">2*order</span> <span class="pre">+</span> <span class="pre">1</span></code>.</p>
+<p>Returns a dict with <code class="docutils literal notranslate"><span class="pre">pdf[M]</span></code> (density expansion with the terms <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">&lt;=</span> <span class="pre">M-1</span></code>), <code class="docutils literal notranslate"><span class="pre">Fup[M]</span></code>
+(<code class="docutils literal notranslate"><span class="pre">P(X1</span> <span class="pre">&gt;=</span> <span class="pre">x1,</span> <span class="pre">X2</span> <span class="pre">&gt;=</span> <span class="pre">x2)</span></code> with the terms <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">&lt;=</span> <span class="pre">2M-1</span></code>; NaN when the saddlepoint has a
+negative component unless <code class="docutils literal notranslate"><span class="pre">direct</span></code>), <code class="docutils literal notranslate"><span class="pre">canc</span></code> and <code class="docutils literal notranslate"><span class="pre">kappa</span></code> (cancellation indicators),
+<code class="docutils literal notranslate"><span class="pre">qerr</span></code> (relative change of <code class="docutils literal notranslate"><span class="pre">Fup</span></code> with half the quadrature nodes; the number of nodes is
+doubled while <code class="docutils literal notranslate"><span class="pre">qerr[-1]</span> <span class="pre">&gt;</span> <span class="pre">qtol</span></code>, up to <code class="docutils literal notranslate"><span class="pre">nGmax</span></code>, default <code class="docutils literal notranslate"><span class="pre">4</span> <span class="pre">nG</span></code>), <code class="docutils literal notranslate"><span class="pre">status</span></code> and <code class="docutils literal notranslate"><span class="pre">nG</span></code>.
+<code class="docutils literal notranslate"><span class="pre">logscale</span> <span class="pre">=</span> <span class="pre">c</span></code> scales <code class="docutils literal notranslate"><span class="pre">Fup</span></code> by <code class="docutils literal notranslate"><span class="pre">exp(-c)</span></code>. The terms are evaluated for the whitened
+vector <code class="docutils literal notranslate"><span class="pre">Y</span> <span class="pre">=</span> <span class="pre">L^-1</span> <span class="pre">X</span></code>, <code class="docutils literal notranslate"><span class="pre">K''</span> <span class="pre">=</span> <span class="pre">L</span> <span class="pre">L'</span></code>; the Taylor coefficients of <code class="docutils literal notranslate"><span class="pre">K_Y</span></code> come from
+<code class="docutils literal notranslate"><span class="pre">Kwhite(nu,</span> <span class="pre">u,</span> <span class="pre">T)</span></code> (<code class="docutils literal notranslate"><span class="pre">T</span> <span class="pre">=</span> <span class="pre">L^-T</span></code>) when given and by polynomial substitution otherwise.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.spa_orthant2">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">spa_orthant2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Kfun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nG</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">200</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Kwhite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logscale</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">0.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-08</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.spa_orthant2" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">P(X1</span> <span class="pre">&gt;=</span> <span class="pre">x1,</span> <span class="pre">X2</span> <span class="pre">&gt;=</span> <span class="pre">x2)</span></code> of orders <code class="docutils literal notranslate"><span class="pre">1..order</span></code> by the bivariate expansion, with the
+inclusion-exclusion when the saddlepoint has negative components; the one-dimensional terms
+use <a class="reference internal" href="#saddlepoint_expansions.spa_uni" title="saddlepoint_expansions.spa_uni"><code class="xref py py-func docutils literal notranslate"><span class="pre">spa_uni()</span></code></a>. With <code class="docutils literal notranslate"><span class="pre">logscale</span> <span class="pre">=</span> <span class="pre">c</span></code> every term is scaled by <code class="docutils literal notranslate"><span class="pre">exp(-c)</span></code>. Returns a
+dict with <code class="docutils literal notranslate"><span class="pre">Fup</span></code>, <code class="docutils literal notranslate"><span class="pre">tau</span></code>, <code class="docutils literal notranslate"><span class="pre">canc</span></code>, <code class="docutils literal notranslate"><span class="pre">kappa</span></code>, <code class="docutils literal notranslate"><span class="pre">status</span></code> (those of the bivariate term of
+the highest order).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.spa_mv">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">spa_mv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Kfun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau0</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Kwhite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.spa_mv" title="Link to this definition">¶</a></dt>
+<dd><p>Saddlepoint approximations of orders <code class="docutils literal notranslate"><span class="pre">1..order</span></code> in dimension <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">len(x)</span></code> of the
+density and of the orthant probability <code class="docutils literal notranslate"><span class="pre">P(X</span> <span class="pre">&gt;=</span> <span class="pre">x)</span></code> from <code class="docutils literal notranslate"><span class="pre">Kfun(nu,</span> <span class="pre">t)</span></code>, the derivative of
+order <code class="docutils literal notranslate"><span class="pre">nu</span></code> (a tuple) of the cumulant generating function at <code class="docutils literal notranslate"><span class="pre">t</span></code> (NaN outside the
+domain); see <a class="reference internal" href="#saddlepoint_expansions.spa_mv_at" title="saddlepoint_expansions.spa_mv_at"><code class="xref py py-func docutils literal notranslate"><span class="pre">spa_mv_at()</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.spa_mv_at">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">spa_mv_at</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Kd</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">tau</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">method</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'auto'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nG</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">64</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nGH</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">48</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nqmc</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">16384</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nshift</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">8</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Kwhite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">qtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">nGmax</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.spa_mv_at" title="Link to this definition">¶</a></dt>
+<dd><p>The expansions from the derivatives at a given saddlepoint: <code class="docutils literal notranslate"><span class="pre">Kd</span></code> is a dict from
+multi-indices (tuples) to <code class="docutils literal notranslate"><span class="pre">K^(nu)(tau)</span></code>, <code class="docutils literal notranslate"><span class="pre">|nu|</span> <span class="pre">&lt;=</span> <span class="pre">2*order</span> <span class="pre">+</span> <span class="pre">1</span></code>.</p>
+<p>Returns a dict with <code class="docutils literal notranslate"><span class="pre">pdf[M]</span></code> (density expansion with the terms <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">&lt;=</span> <span class="pre">M-1</span></code>), <code class="docutils literal notranslate"><span class="pre">Fup[M]</span></code>
+(<code class="docutils literal notranslate"><span class="pre">P(X</span> <span class="pre">&gt;=</span> <span class="pre">x)</span></code> with the terms <code class="docutils literal notranslate"><span class="pre">m</span> <span class="pre">&lt;=</span> <span class="pre">2M-1</span></code>; NaN when the saddlepoint has a negative
+component, use <a class="reference internal" href="#saddlepoint_expansions.spa_orthant" title="saddlepoint_expansions.spa_orthant"><code class="xref py py-func docutils literal notranslate"><span class="pre">spa_orthant()</span></code></a>), <code class="docutils literal notranslate"><span class="pre">kappa</span></code> and <code class="docutils literal notranslate"><span class="pre">kappa_pdf</span></code> (cancellation indicators),
+<code class="docutils literal notranslate"><span class="pre">err</span></code> (quadrature check: the change with half the nodes for <code class="docutils literal notranslate"><span class="pre">method='quad'</span></code>, the
+standard error over the random shifts for <code class="docutils literal notranslate"><span class="pre">'qmc'</span></code>), <code class="docutils literal notranslate"><span class="pre">method_cdf</span></code>, <code class="docutils literal notranslate"><span class="pre">nodes</span></code> and
+<code class="docutils literal notranslate"><span class="pre">status</span></code>. <code class="docutils literal notranslate"><span class="pre">method</span></code> is <code class="docutils literal notranslate"><span class="pre">'quad'</span></code> (Gauss quadrature, <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">3</span></code>), <code class="docutils literal notranslate"><span class="pre">'qmc'</span></code> (randomized
+quasi-Monte Carlo, any <code class="docutils literal notranslate"><span class="pre">d</span></code>), <code class="docutils literal notranslate"><span class="pre">'none'</span></code> (density only) or <code class="docutils literal notranslate"><span class="pre">'auto'</span></code> (<code class="docutils literal notranslate"><span class="pre">'quad'</span></code> for
+<code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">=</span> <span class="pre">3</span></code>, <code class="docutils literal notranslate"><span class="pre">'qmc'</span></code> otherwise). The terms are evaluated in whitened coordinates; the
+Taylor coefficients of <code class="docutils literal notranslate"><span class="pre">K_Y(u)</span> <span class="pre">=</span> <span class="pre">K(T</span> <span class="pre">u)</span></code> come from <code class="docutils literal notranslate"><span class="pre">Kwhite(nu,</span> <span class="pre">u,</span> <span class="pre">T)</span></code> when given and by
+polynomial substitution otherwise.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.spa_orthant">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">spa_orthant</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">Kfun</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">x</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">Kwhite</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.spa_orthant" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">P(X</span> <span class="pre">&gt;=</span> <span class="pre">x)</span></code> of orders <code class="docutils literal notranslate"><span class="pre">1..order</span></code> in any dimension, with the inclusion-exclusion of
+the paper when the saddlepoint has negative components: every term is the orthant
+probability of a marginal with some components negated, computed by <a class="reference internal" href="#saddlepoint_expansions.spa_uni" title="saddlepoint_expansions.spa_uni"><code class="xref py py-func docutils literal notranslate"><span class="pre">spa_uni()</span></code></a> (one
+dimension), <a class="reference internal" href="#saddlepoint_expansions.spa_bi" title="saddlepoint_expansions.spa_bi"><code class="xref py py-func docutils literal notranslate"><span class="pre">spa_bi()</span></code></a> (two) or <a class="reference internal" href="#saddlepoint_expansions.spa_mv" title="saddlepoint_expansions.spa_mv"><code class="xref py py-func docutils literal notranslate"><span class="pre">spa_mv()</span></code></a> (three or more), recursively. Returns a
+dict with <code class="docutils literal notranslate"><span class="pre">Fup</span></code>, <code class="docutils literal notranslate"><span class="pre">tau</span></code> and <code class="docutils literal notranslate"><span class="pre">err</span></code> (the sum of the absolute error estimates of the terms;
+NaN when a term has none). <code class="docutils literal notranslate"><span class="pre">Kwhite</span></code> is transformed for every term (it must accept a
+rectangular <code class="docutils literal notranslate"><span class="pre">d</span> <span class="pre">x</span> <span class="pre">k</span></code> matrix).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.orthant2">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">orthant2</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-13</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.orthant2" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">P(Z_1</span> <span class="pre">&gt;=</span> <span class="pre">t_1,</span> <span class="pre">Z_2</span> <span class="pre">&gt;=</span> <span class="pre">t_2)</span></code>, <code class="docutils literal notranslate"><span class="pre">Z</span> <span class="pre">~</span> <span class="pre">N(0,</span> <span class="pre">S)</span></code>, by one-dimensional adaptive quadrature.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.orthant3">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">orthant3</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">t</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">S</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rtol</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1e-13</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.orthant3" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">P(Z</span> <span class="pre">&gt;=</span> <span class="pre">t)</span></code>, <code class="docutils literal notranslate"><span class="pre">Z</span> <span class="pre">~</span> <span class="pre">N(0,</span> <span class="pre">S)</span></code> trivariate, by adaptive quadrature over <code class="docutils literal notranslate"><span class="pre">z_1</span></code> of the
+bivariate conditional orthant probability.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.kfun">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">kfun</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxdeg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.kfun" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">Kfun(nu,</span> <span class="pre">t)</span></code> for the derivative interface, from a <a class="reference internal" href="#saddlepoint_expansions.CGF" title="saddlepoint_expansions.CGF"><code class="xref py py-class docutils literal notranslate"><span class="pre">CGF</span></code></a>: the Taylor polynomial
+at the last <code class="docutils literal notranslate"><span class="pre">t</span></code> is memoized (degree 2 while only derivatives of order &lt;= 2 are requested,
+as in the saddlepoint iteration, otherwise <code class="docutils literal notranslate"><span class="pre">maxdeg</span></code>). Not thread-safe: one per task.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.kwhite">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">kwhite</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxdeg</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.kwhite" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">Kwhite(nu,</span> <span class="pre">u,</span> <span class="pre">M)</span></code> for the derivative interface: derivatives at <code class="docutils literal notranslate"><span class="pre">u</span></code> of
+<code class="docutils literal notranslate"><span class="pre">K_Y(u)</span> <span class="pre">=</span> <span class="pre">K(M</span> <span class="pre">u)</span></code> from the Taylor polynomial of <code class="docutils literal notranslate"><span class="pre">K(M</span> <span class="pre">u</span> <span class="pre">+</span> <span class="pre">M</span> <span class="pre">v)</span></code>, which the expansions
+evaluate in whitened coordinates; <code class="docutils literal notranslate"><span class="pre">M</span></code> may be rectangular. Memoized at the last (u, M).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.ratio_mv">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.</span></span><span class="sig-name descname"><span class="pre">ratio_mv</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">K2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">r</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">order</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.ratio_mv" title="Link to this definition">¶</a></dt>
+<dd><p>Saddlepoint expansion of orders <code class="docutils literal notranslate"><span class="pre">1..order</span></code> of the joint density at <code class="docutils literal notranslate"><span class="pre">r</span></code> of
+<code class="docutils literal notranslate"><span class="pre">R_j</span> <span class="pre">=</span> <span class="pre">X_j/Y_j</span></code> from the cgf <code class="docutils literal notranslate"><span class="pre">K2</span></code> of <code class="docutils literal notranslate"><span class="pre">(X_1..X_d,</span> <span class="pre">Y_1..Y_d)</span></code>, <code class="docutils literal notranslate"><span class="pre">Y_j</span> <span class="pre">&gt;</span> <span class="pre">0</span></code>: with
+<code class="docutils literal notranslate"><span class="pre">W</span> <span class="pre">=</span> <span class="pre">X</span> <span class="pre">-</span> <span class="pre">r*Y</span></code>, <code class="docutils literal notranslate"><span class="pre">K_W(s)</span> <span class="pre">=</span> <span class="pre">K(s,</span> <span class="pre">-r*s)</span></code>, <code class="docutils literal notranslate"><span class="pre">K_W'(shat)</span> <span class="pre">=</span> <span class="pre">0</span></code>, <code class="docutils literal notranslate"><span class="pre">K_W''</span> <span class="pre">=</span> <span class="pre">L</span> <span class="pre">L'</span></code>,
+<code class="docutils literal notranslate"><span class="pre">f(r)</span> <span class="pre">=</span> <span class="pre">(2</span> <span class="pre">pi</span> <span class="pre">i)^-d</span> <span class="pre">int</span> <span class="pre">exp(K_W(s))</span> <span class="pre">g(s)</span> <span class="pre">ds</span></code> with <code class="docutils literal notranslate"><span class="pre">g</span></code> the sum over the partitions of the
+index set of the products of the mixed derivatives <code class="docutils literal notranslate"><span class="pre">K_B(s,</span> <span class="pre">-r*s)</span></code>, expanded in whitened
+coordinates (Corollary 1 of the paper). Returns <code class="docutils literal notranslate"><span class="pre">(f,</span> <span class="pre">info)</span></code>.</p>
+</dd></dl>
+
+</section>
+<section id="module-saddlepoint_expansions.taylor">
+<span id="the-taylor-algebra"></span><h2>The Taylor algebra<a class="headerlink" href="#module-saddlepoint_expansions.taylor" title="Link to this heading">¶</a></h2>
+<p>Truncated multivariate Taylor polynomials (Taylor-mode automatic differentiation).</p>
+<p>A <a class="reference internal" href="#saddlepoint_expansions.taylor.TPoly" title="saddlepoint_expansions.taylor.TPoly"><code class="xref py py-class docutils literal notranslate"><span class="pre">TPoly</span></code></a> is a polynomial in <code class="docutils literal notranslate"><span class="pre">d</span></code> variables truncated at total degree <code class="docutils literal notranslate"><span class="pre">N</span></code>, with
+<code class="docutils literal notranslate"><span class="pre">float64</span></code> (or <code class="docutils literal notranslate"><span class="pre">complex128</span></code>) coefficients stored in the graded monomial order of its
+<a class="reference internal" href="#saddlepoint_expansions.taylor.Algebra" title="saddlepoint_expansions.taylor.Algebra"><code class="xref py py-class docutils literal notranslate"><span class="pre">Algebra</span></code></a>. The
+arithmetic operations and the elementary functions (<code class="docutils literal notranslate"><span class="pre">exp</span></code>, <code class="docutils literal notranslate"><span class="pre">log</span></code>, <code class="docutils literal notranslate"><span class="pre">sqrt</span></code>, powers, division,
+the trigonometric and hyperbolic functions, <code class="docutils literal notranslate"><span class="pre">arctan</span></code>, and <code class="docutils literal notranslate"><span class="pre">sincu</span></code>/<code class="docutils literal notranslate"><span class="pre">sinhc</span></code> for <code class="docutils literal notranslate"><span class="pre">sin(x)/x</span></code>
+and <code class="docutils literal notranslate"><span class="pre">sinh(x)/x</span></code> with their removable singularity)
+propagate the coefficients exactly (up to rounding), so that evaluating a function written in
+ordinary arithmetic on the variables of an algebra returns its Taylor polynomial, whose
+coefficient of <code class="docutils literal notranslate"><span class="pre">u^nu</span></code> is the derivative of order <code class="docutils literal notranslate"><span class="pre">nu</span></code> divided by <code class="docutils literal notranslate"><span class="pre">nu!</span></code>.</p>
+<p>Numpy ufuncs work on <a class="reference internal" href="#saddlepoint_expansions.taylor.TPoly" title="saddlepoint_expansions.taylor.TPoly"><code class="xref py py-class docutils literal notranslate"><span class="pre">TPoly</span></code></a> objects (<code class="docutils literal notranslate"><span class="pre">np.log(p)</span></code>, <code class="docutils literal notranslate"><span class="pre">np.exp(p)</span></code>, <code class="docutils literal notranslate"><span class="pre">np.sqrt(p)</span></code>, and
+the arithmetic ufuncs), also elementwise on object arrays of them, so that a cumulant generating
+function written with numpy for float arguments usually works unchanged.</p>
+<dl class="py exception">
+<dt class="sig sig-object py" id="saddlepoint_expansions.taylor.DomainError">
+<span class="property"><span class="k"><span class="pre">exception</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.taylor.</span></span><span class="sig-name descname"><span class="pre">DomainError</span></span><a class="headerlink" href="#saddlepoint_expansions.taylor.DomainError" title="Link to this definition">¶</a></dt>
+<dd><p>Raised by <code class="docutils literal notranslate"><span class="pre">log</span></code>, <code class="docutils literal notranslate"><span class="pre">sqrt</span></code> and non-integer powers of a polynomial whose constant term
+is outside the domain of the function (negative, or zero for <code class="docutils literal notranslate"><span class="pre">log</span></code>).</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.taylor.get_algebra">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.taylor.</span></span><span class="sig-name descname"><span class="pre">get_algebra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.taylor.get_algebra" title="Link to this definition">¶</a></dt>
+<dd><p>The algebra of <code class="docutils literal notranslate"><span class="pre">d</span></code> variables truncated at degree <code class="docutils literal notranslate"><span class="pre">N</span></code> (cached).</p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="saddlepoint_expansions.taylor.Algebra">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.taylor.</span></span><span class="sig-name descname"><span class="pre">Algebra</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.taylor.Algebra" title="Link to this definition">¶</a></dt>
+<dd><p>Index tables of the truncated algebra of <code class="docutils literal notranslate"><span class="pre">d</span></code> variables and total degree <code class="docutils literal notranslate"><span class="pre">N</span></code>.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="saddlepoint_expansions.taylor.Algebra.variables">
+<span class="sig-name descname"><span class="pre">variables</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.taylor.Algebra.variables" title="Link to this definition">¶</a></dt>
+<dd><p>The <code class="docutils literal notranslate"><span class="pre">d</span></code> variables as polynomials.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="saddlepoint_expansions.taylor.TPoly">
+<span class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></span><span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.taylor.</span></span><span class="sig-name descname"><span class="pre">TPoly</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">alg</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">c</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.taylor.TPoly" title="Link to this definition">¶</a></dt>
+<dd><p>A truncated multivariate Taylor polynomial; see the module docstring.</p>
+<dl class="py method">
+<dt class="sig sig-object py" id="saddlepoint_expansions.taylor.TPoly.coeff">
+<span class="sig-name descname"><span class="pre">coeff</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nu</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.taylor.TPoly.coeff" title="Link to this definition">¶</a></dt>
+<dd><p>The coefficient of <code class="docutils literal notranslate"><span class="pre">u^nu</span></code> (<code class="docutils literal notranslate"><span class="pre">nu</span></code> a tuple), which is <code class="docutils literal notranslate"><span class="pre">f^(nu)(0)/nu!</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="saddlepoint_expansions.taylor.TPoly.derivative">
+<span class="sig-name descname"><span class="pre">derivative</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">nu</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.taylor.TPoly.derivative" title="Link to this definition">¶</a></dt>
+<dd><p>The derivative of order <code class="docutils literal notranslate"><span class="pre">nu</span></code> at the expansion point: <code class="docutils literal notranslate"><span class="pre">nu!</span> <span class="pre">*</span> <span class="pre">coeff(nu)</span></code>.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="saddlepoint_expansions.taylor.TPoly.sincu">
+<span class="sig-name descname"><span class="pre">sincu</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.taylor.TPoly.sincu" title="Link to this definition">¶</a></dt>
+<dd><p>sin(x)/x (unnormalized), with the removable singularity at a zero constant term.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="saddlepoint_expansions.taylor.TPoly.sinhc">
+<span class="sig-name descname"><span class="pre">sinhc</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.taylor.TPoly.sinhc" title="Link to this definition">¶</a></dt>
+<dd><p>sinh(x)/x, with the removable singularity at a zero constant term.</p>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.taylor.sincu">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.taylor.</span></span><span class="sig-name descname"><span class="pre">sincu</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.taylor.sincu" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">sin(x)/x</span></code> (unnormalized, unlike <code class="docutils literal notranslate"><span class="pre">np.sinc</span></code>), equal to 1 at 0; works on floats, arrays
+and polynomials, where the removable singularity at a zero constant term is handled.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.taylor.sinhc">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.taylor.</span></span><span class="sig-name descname"><span class="pre">sinhc</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.taylor.sinhc" title="Link to this definition">¶</a></dt>
+<dd><p><code class="docutils literal notranslate"><span class="pre">sinh(x)/x</span></code>, equal to 1 at 0; works on floats, arrays and polynomials, where the
+removable singularity at a zero constant term is handled. The cumulant generating function
+of the uniform distribution on <code class="docutils literal notranslate"><span class="pre">[-1,</span> <span class="pre">1]</span></code> is <code class="docutils literal notranslate"><span class="pre">log(sinhc(t))</span></code>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.taylor.from_coefficients">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.taylor.</span></span><span class="sig-name descname"><span class="pre">from_coefficients</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">coeffs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.taylor.from_coefficients" title="Link to this definition">¶</a></dt>
+<dd><p>A polynomial of degree <code class="docutils literal notranslate"><span class="pre">N</span></code> in <code class="docutils literal notranslate"><span class="pre">d</span></code> variables from a table of its coefficients: a dict
+from exponent tuples to the coefficient of <code class="docutils literal notranslate"><span class="pre">u^nu</span></code> (<code class="docutils literal notranslate"><span class="pre">f^(nu)/nu!</span></code>), missing entries zero.
+For closed-form <code class="docutils literal notranslate"><span class="pre">taylor</span></code> functions of a <a class="reference internal" href="#saddlepoint_expansions.CGF" title="saddlepoint_expansions.CGF"><code class="xref py py-class docutils literal notranslate"><span class="pre">CGF</span></code></a>.</p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="saddlepoint_expansions.taylor.variables">
+<span class="sig-prename descclassname"><span class="pre">saddlepoint_expansions.taylor.</span></span><span class="sig-name descname"><span class="pre">variables</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">d</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">N</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#saddlepoint_expansions.taylor.variables" title="Link to this definition">¶</a></dt>
+<dd><p>The <code class="docutils literal notranslate"><span class="pre">d</span></code> variables of the algebra of degree <code class="docutils literal notranslate"><span class="pre">N</span></code>, as a numpy object array.</p>
+</dd></dl>
+
+</section>
+</section>
+
+        </article>
+      </div>
+      <footer>
+        
+        <div class="related-pages">
+          
+          <a class="prev-page" href="guide.html">
+              <svg class="furo-related-icon"><use href="#svg-arrow-right"></use></svg>
+              <div class="page-info">
+                <div class="context">
+                  <span>Previous</span>
+                </div>
+                
+                <div class="title">Guide</div>
+                
+              </div>
+            </a>
+        </div>
+        <div class="bottom-of-page">
+          <div class="left-details">
+            <div class="copyright">
+                Copyright &#169; 2026, Simon A. Broda and Raymond Kan
+            </div>
+            Made with <a href="https://www.sphinx-doc.org/">Sphinx</a> and <a class="muted-link" href="https://pradyunsg.me">@pradyunsg</a>'s
+            
+            <a href="https://github.com/pradyunsg/furo">Furo</a>
+            
+          </div>
+          <div class="right-details">
+            
+          </div>
+        </div>
+        
+      </footer>
+    </div>
+    <aside class="toc-drawer">
+      
+      
+      <div class="toc-sticky toc-scroll">
+        <div class="toc-title-container">
+          <span class="toc-title">
+            On this page
+          </span>
+        </div>
+        <div class="toc-tree-container">
+          <div class="toc-tree">
+            <ul>
+<li><a class="reference internal" href="#">API reference</a><ul>
+<li><a class="reference internal" href="#cumulant-generating-functions-and-the-high-level-interface">Cumulant generating functions and the high-level interface</a><ul>
+<li><a class="reference internal" href="#saddlepoint_expansions.CGF"><code class="docutils literal notranslate"><span class="pre">CGF</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.derivatives"><code class="docutils literal notranslate"><span class="pre">derivatives()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.saddlepoint"><code class="docutils literal notranslate"><span class="pre">saddlepoint()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.tailprob"><code class="docutils literal notranslate"><span class="pre">tailprob()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.density"><code class="docutils literal notranslate"><span class="pre">density()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.ratio_density"><code class="docutils literal notranslate"><span class="pre">ratio_density()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.ratio_tailprob"><code class="docutils literal notranslate"><span class="pre">ratio_tailprob()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.studentized_density"><code class="docutils literal notranslate"><span class="pre">studentized_density()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.studentized_tailprob"><code class="docutils literal notranslate"><span class="pre">studentized_tailprob()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.studentized_quantile"><code class="docutils literal notranslate"><span class="pre">studentized_quantile()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.studentized_saddlepoint"><code class="docutils literal notranslate"><span class="pre">studentized_saddlepoint()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.studentized_locus"><code class="docutils literal notranslate"><span class="pre">studentized_locus()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.reflect"><code class="docutils literal notranslate"><span class="pre">reflect()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.marginal"><code class="docutils literal notranslate"><span class="pre">marginal()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.linear_combination"><code class="docutils literal notranslate"><span class="pre">linear_combination()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.sample_mean"><code class="docutils literal notranslate"><span class="pre">sample_mean()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.shift"><code class="docutils literal notranslate"><span class="pre">shift()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-saddlepoint_expansions.cgfs">Library of cumulant generating functions</a><ul>
+<li><a class="reference internal" href="#saddlepoint_expansions.cgfs.normal_cgf"><code class="docutils literal notranslate"><span class="pre">normal_cgf()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.cgfs.gamma_cgf"><code class="docutils literal notranslate"><span class="pre">gamma_cgf()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.cgfs.ncx2_cgf"><code class="docutils literal notranslate"><span class="pre">ncx2_cgf()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.cgfs.exponential_sums_cgf"><code class="docutils literal notranslate"><span class="pre">exponential_sums_cgf()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.cgfs.quadratic_forms_cgf"><code class="docutils literal notranslate"><span class="pre">quadratic_forms_cgf()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.cgfs.wishart_diag_cgf"><code class="docutils literal notranslate"><span class="pre">wishart_diag_cgf()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.cgfs.common_component_cgf"><code class="docutils literal notranslate"><span class="pre">common_component_cgf()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.cgfs.uniform_cgf"><code class="docutils literal notranslate"><span class="pre">uniform_cgf()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#the-derivative-interface">The derivative interface</a><ul>
+<li><a class="reference internal" href="#saddlepoint_expansions.spa_saddle"><code class="docutils literal notranslate"><span class="pre">spa_saddle()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.spa_uni"><code class="docutils literal notranslate"><span class="pre">spa_uni()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.spa_ratio_pdf"><code class="docutils literal notranslate"><span class="pre">spa_ratio_pdf()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.spa_bi"><code class="docutils literal notranslate"><span class="pre">spa_bi()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.spa_bi_at"><code class="docutils literal notranslate"><span class="pre">spa_bi_at()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.spa_orthant2"><code class="docutils literal notranslate"><span class="pre">spa_orthant2()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.spa_mv"><code class="docutils literal notranslate"><span class="pre">spa_mv()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.spa_mv_at"><code class="docutils literal notranslate"><span class="pre">spa_mv_at()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.spa_orthant"><code class="docutils literal notranslate"><span class="pre">spa_orthant()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.orthant2"><code class="docutils literal notranslate"><span class="pre">orthant2()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.orthant3"><code class="docutils literal notranslate"><span class="pre">orthant3()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.kfun"><code class="docutils literal notranslate"><span class="pre">kfun()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.kwhite"><code class="docutils literal notranslate"><span class="pre">kwhite()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.ratio_mv"><code class="docutils literal notranslate"><span class="pre">ratio_mv()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#module-saddlepoint_expansions.taylor">The Taylor algebra</a><ul>
+<li><a class="reference internal" href="#saddlepoint_expansions.taylor.DomainError"><code class="docutils literal notranslate"><span class="pre">DomainError</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.taylor.get_algebra"><code class="docutils literal notranslate"><span class="pre">get_algebra()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.taylor.Algebra"><code class="docutils literal notranslate"><span class="pre">Algebra</span></code></a><ul>
+<li><a class="reference internal" href="#saddlepoint_expansions.taylor.Algebra.variables"><code class="docutils literal notranslate"><span class="pre">Algebra.variables()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#saddlepoint_expansions.taylor.TPoly"><code class="docutils literal notranslate"><span class="pre">TPoly</span></code></a><ul>
+<li><a class="reference internal" href="#saddlepoint_expansions.taylor.TPoly.coeff"><code class="docutils literal notranslate"><span class="pre">TPoly.coeff()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.taylor.TPoly.derivative"><code class="docutils literal notranslate"><span class="pre">TPoly.derivative()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.taylor.TPoly.sincu"><code class="docutils literal notranslate"><span class="pre">TPoly.sincu()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.taylor.TPoly.sinhc"><code class="docutils literal notranslate"><span class="pre">TPoly.sinhc()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#saddlepoint_expansions.taylor.sincu"><code class="docutils literal notranslate"><span class="pre">sincu()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.taylor.sinhc"><code class="docutils literal notranslate"><span class="pre">sinhc()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.taylor.from_coefficients"><code class="docutils literal notranslate"><span class="pre">from_coefficients()</span></code></a></li>
+<li><a class="reference internal" href="#saddlepoint_expansions.taylor.variables"><code class="docutils literal notranslate"><span class="pre">variables()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+          </div>
+        </div>
+      </div>
+      
+      
+    </aside>
+  </div>
+</div><script src="_static/documentation_options.js?v=01f34227"></script>
+    <script src="_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="_static/scripts/furo.js?v=46bd48cc"></script>
+    </body>
+</html>
