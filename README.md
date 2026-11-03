@@ -2,6 +2,7 @@
 
 [![CI](https://github.com/s-broda/saddlepoint-expansions/actions/workflows/ci.yml/badge.svg)](https://github.com/s-broda/saddlepoint-expansions/actions/workflows/ci.yml)
 [![Documentation](https://img.shields.io/badge/docs-latest-blue.svg)](https://s-broda.github.io/saddlepoint-expansions/)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.23926877.svg)](https://doi.org/10.5281/zenodo.23926877)
 
 Saddlepoint expansions of any order for tail probabilities and densities of random vectors,
 from the cumulant generating function alone. Python port of the Julia package
