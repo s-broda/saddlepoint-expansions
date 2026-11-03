@@ -1,0 +1,17 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it as below."
+type: software
+title: "saddlepoint-expansions"
+abstract: "Saddlepoint expansions of any order for multivariate tail probabilities and densities, from the cumulant generating function. Python port of SaddlepointExpansions.jl."
+authors:
+  - family-names: Broda
+    given-names: Simon A.
+  - family-names: Kan
+    given-names: Raymond
+repository-code: "https://github.com/s-broda/saddlepoint-expansions"
+license: MIT
+keywords:
+  - saddlepoint approximation
+  - tail probability
+  - asymptotic expansion
+  - orthant probability
