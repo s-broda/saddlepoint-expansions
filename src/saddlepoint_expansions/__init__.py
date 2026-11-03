@@ -26,7 +26,7 @@ from .taylor import DomainError, TPoly, from_coefficients, get_algebra, sincu, s
 from .univariate import spa_ratio_pdf, spa_uni
 from .util import SaddlepointError, spa_saddle
 
-__version__ = "0.2.1"
+__version__ = "0.2.2"
 
 __all__ = [
     "CGF", "derivatives", "saddlepoint", "tailprob", "density", "ratio_density", "ratio_tailprob",
