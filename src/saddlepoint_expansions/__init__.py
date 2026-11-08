@@ -9,16 +9,24 @@ which the terms are evaluated. The main functions are :func:`tailprob`, :func:`d
 :func:`ratio_density`, :func:`ratio_tailprob`, :func:`saddlepoint` and :func:`derivatives`, and, for a
 Studentized mean ``X/sqrt(Y)`` (Bao, Broda and Kan, "Inversion formulas and saddlepoint expansions
 for Studentized means"), :func:`studentized_density`, :func:`studentized_tailprob` and
-:func:`studentized_quantile`.
+:func:`studentized_quantile`; for conditional distributions ``P(X_A >= x_A | X_B = x_B)`` and
+conditional densities, for continuous and lattice variables (Broda and Kan, "Conditional saddlepoint
+expansions of arbitrary order"), :func:`conditional_tailprob` and :func:`conditional_density`, with
+``lattice=True`` in :func:`tailprob` and :func:`density` for integer-valued vectors without
+conditioning; quantiles by Newton's method in saddlepoint space, :func:`quantile` and
+:func:`ratio_quantile`; and normalized densities (``normalize=True``).
 """
 from .api import density, ratio_density, ratio_tailprob, saddlepoint, tailprob
 from .bivariate import spa_bi, spa_bi_at
 from .cgf import (CGF, derivatives, kfun, kwhite, linear_combination, marginal, reflect,
                   sample_mean, shift)
-from .cgfs import (common_component_cgf, exponential_sums_cgf, gamma_cgf, ncx2_cgf, normal_cgf,
+from .cgfs import (binomial_cgf, common_component_cgf, exponential_sums_cgf, gamma_cgf,
+                   logistic_regression_cgf, ncx2_cgf, negative_binomial_cgf, normal_cgf, poisson_cgf,
                    quadratic_forms_cgf, uniform_cgf, wishart_diag_cgf)
+from .conditional import conditional_density, conditional_tailprob, spa_cond
 from .multivariate import spa_mv, spa_mv_at, spa_orthant, spa_orthant2
 from .normal import orthant2, orthant3
+from .quantiles import quantile, ratio_quantile
 from .ratios import ratio_mv
 from .studentized import (studentized_density, studentized_locus, studentized_quantile,
                           studentized_saddlepoint, studentized_tailprob)
@@ -26,16 +34,17 @@ from .taylor import DomainError, TPoly, from_coefficients, get_algebra, sincu, s
 from .univariate import spa_ratio_pdf, spa_uni
 from .util import SaddlepointError, spa_saddle
 
-__version__ = "0.2.2"
+__version__ = "0.3.0"
 
 __all__ = [
     "CGF", "derivatives", "saddlepoint", "tailprob", "density", "ratio_density", "ratio_tailprob",
     "studentized_density", "studentized_tailprob", "studentized_quantile", "studentized_saddlepoint",
-    "studentized_locus",
+    "studentized_locus", "conditional_tailprob", "conditional_density", "quantile", "ratio_quantile",
     "reflect", "marginal", "linear_combination", "sample_mean", "shift",
     "normal_cgf", "gamma_cgf", "ncx2_cgf", "exponential_sums_cgf", "quadratic_forms_cgf",
     "wishart_diag_cgf", "common_component_cgf", "uniform_cgf", "sincu", "sinhc",
+    "logistic_regression_cgf", "poisson_cgf", "binomial_cgf", "negative_binomial_cgf",
     "spa_uni", "spa_ratio_pdf", "spa_bi", "spa_bi_at", "spa_mv", "spa_mv_at", "spa_orthant",
-    "spa_orthant2", "spa_saddle", "orthant2", "orthant3", "kfun", "kwhite",
+    "spa_orthant2", "spa_saddle", "spa_cond", "orthant2", "orthant3", "kfun", "kwhite",
     "DomainError", "SaddlepointError", "TPoly", "get_algebra", "variables", "from_coefficients", "ratio_mv",
 ]

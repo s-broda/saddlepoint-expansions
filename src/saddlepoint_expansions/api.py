@@ -33,7 +33,7 @@ def _signs(name, d, lower, signs):
     return s
 
 
-def tailprob(K, x, order=3, lower=False, signs=None, **kwargs):
+def tailprob(K, x, order=3, lower=False, signs=None, lattice=False, sinh="saddle", **kwargs):
     """Saddlepoint expansions of orders ``1..order`` of the orthant probability ``P(X >= x)``
     (componentwise) for the random vector with cumulant generating function ``K``.
 
@@ -51,7 +51,19 @@ def tailprob(K, x, order=3, lower=False, signs=None, **kwargs):
     arguments are passed to :func:`~saddlepoint_expansions.multivariate.spa_mv` (``nG``,
     ``nqmc``, ...) and, for ``d = 2``, to
     :func:`~saddlepoint_expansions.multivariate.spa_orthant2` (``nG``, ``logscale``, ...).
-    For ``d = 1``, ``x`` may be a scalar."""
+    For ``d = 1``, ``x`` may be a scalar.
+
+    ``lattice=True``: ``X = S`` is integer-valued and so is ``x = k``; ``F`` is ``P(S >= k)`` with
+    the continuity correction and the amplitude ``prod_j s_j/(2 sinh(s_j/2))``, by Theorem 3 of
+    Broda and Kan, "Conditional saddlepoint expansions of arbitrary order", with no conditioning
+    components (the computation of :func:`~saddlepoint_expansions.conditional_tailprob` with all
+    components in ``A``, with the same numbers): the saddlepoint at ``k - 1/2``, ``sinh='saddle'``
+    expanding the amplitude about the saddlepoint and ``'origin'`` about the origin (Kolassa 2003).
+    In one dimension ``F[0]`` has the relative error ``O(1/n)`` of the continuity-corrected
+    approximations of Daniels (1987). Negative saddlepoint components are handled by the
+    inclusion-exclusion with ``P(S_j <= k_j - 1) = P(-S_j >= -k_j + 1)``; where the corrected point
+    is outside the convex hull of the support (``P(S >= 0)`` of a count) there is no saddlepoint
+    and a DomainError is raised. ``info`` then holds ``Fp``, ``kappa`` and ``err``."""
     if order < 1:
         raise ValueError("tailprob: order must be a positive integer")
     d = K.d
@@ -66,6 +78,14 @@ def tailprob(K, x, order=3, lower=False, signs=None, **kwargs):
     xr = sg * xx
     maxdeg = 2 * order + 1
     Kf = kfun(Kr, maxdeg)
+    if lattice:
+        from .conditional import _spa_cond
+        nG = kwargs.get("nG", 64)
+        r = _spa_cond(Kf, kwhite(Kr, maxdeg), xr, list(range(d)), order, density=False, lattice=True,
+                      sinh=sinh, nG=nG)
+        tau = sg * r["tau"]
+        return dict(F=r["P"], tau=(tau[0] if scalar else tau), status=r["status"],
+                    info=dict(Fp=r["Pp"], kappa=r["kappaP"], err=r["err"], nG=nG))
     if d == 1:
         s, sinfo = spa_saddle(Kf, xr, None)
         Kd = [Kf((k,), s) for k in range(maxdeg + 1)]
@@ -82,14 +102,42 @@ def tailprob(K, x, order=3, lower=False, signs=None, **kwargs):
     return dict(F=r["Fup"], tau=sg * r["tau"], status="ok", info=r)
 
 
-def density(K, x, order=3, **kwargs):
+def density(K, x, order=3, lattice=False, normalize=False, **kwargs):
     """Saddlepoint expansions of orders ``1..order`` of the density at ``x`` (Theorem 3 of the
     paper; Daniels's expansion when ``d = 1``): ``f[M-1]`` keeps the terms ``m <= M-1`` and
     has relative error ``O(n^-M)``. A finite sum of Hermite polynomials, no integration.
     Returns a dict with ``f``, ``tau``, ``status`` and ``info``. In three or more dimensions
     the cancellation indicator ``info['kappa_pdf']`` should be checked at high orders (the
     Julia package repeats the computation in higher precision when it is large; this package
-    works in double precision)."""
+    works in double precision).
+
+    ``lattice=True`` (integer-valued ``S``, integer ``x = k``): ``f`` is ``P(S = k)``, the same
+    expansion at ``k`` (Daniels 1987 at order one; Theorem 3 of the conditional paper with no
+    conditioning components), computed as :func:`~saddlepoint_expansions.conditional_density`
+    with all components in ``A``, with the same numbers.
+
+    ``normalize=True`` divides the expansion of every order by its total mass, returned in
+    ``info['mass']`` (pass it back as ``normalize`` to reuse it): the integral over ``x`` is computed
+    in saddlepoint space, ``x = K'(s)``, ``dx = det K''(s) ds``, so that the saddlepoint is known at
+    every node and no saddlepoint equation is solved, by ``scipy.integrate.quad_vec`` over the
+    domain of ``K`` (nested over the coordinates in more dimensions, which is slow), the tails
+    truncated where the leading term has fallen by ``e^-50``. For the normal the masses are one;
+    for the gamma with shape ``a``, ``c_1 = Gamma(a) e^a a^(1/2 - a)/sqrt(2 pi)``, and every
+    normalized order is exact."""
+    if normalize is not False and normalize is not None:
+        if lattice:
+            raise ValueError("density: normalize is for continuous variables")
+        from .quantiles import _density_mass
+        if normalize is True:
+            mass = _density_mass(K, order)
+        else:
+            mass = np.asarray(normalize, dtype=float)
+            if len(mass) < order:
+                raise ValueError(f"density: normalize must be True or a vector of {order} masses")
+        r = density(K, x, order=order, **kwargs)
+        info = dict(r["info"])
+        info["mass"] = mass[:order]
+        return dict(f=np.asarray(r["f"]) / mass[:order], tau=r["tau"], status=r["status"], info=info)
     if order < 1:
         raise ValueError("density: order must be a positive integer")
     d = K.d
@@ -101,6 +149,11 @@ def density(K, x, order=3, **kwargs):
         raise ValueError("density: x must be finite")
     maxdeg = 2 * order + 1
     Kf = kfun(K, maxdeg)
+    if lattice:
+        from .conditional import _spa_cond
+        r = _spa_cond(Kf, kwhite(K, maxdeg), xx, list(range(d)), order, tail=False)
+        return dict(f=r["f"], tau=(r["tauf"][0] if scalar else r["tauf"]), status=r["status"],
+                    info=dict(kappa=r["kappaf"]))
     if d == 1:
         s, sinfo = spa_saddle(Kf, xx, None)
         Kd = [Kf((k,), s) for k in range(maxdeg + 1)]
@@ -124,7 +177,7 @@ def _ratio_cgf(K, r):
     return linear_combination(K, np.array([[1.0], [-float(r)]]))
 
 
-def ratio_density(K, r, order=3, general=False):
+def ratio_density(K, r, order=3, general=False, normalize=False):
     """Saddlepoint expansions of orders ``1..order`` of the joint density at ``r`` of the
     vector of ratios ``R = (X_1/Y_1, ..., X_d/Y_d)``, ``d = len(r)``, with positive denominators.
     ``K`` is the cgf of ``(X_1..X_d, Y_1..Y_d)`` (dimension ``2d``) or, for a common denominator
@@ -134,7 +187,24 @@ def ratio_density(K, r, order=3, general=False):
     amplitude expansion of Corollary 1 in whitened coordinates, every Taylor coefficient taken
     from one Taylor polynomial of ``K(s, -r*s + tau)`` (:func:`~saddlepoint_expansions.ratios.ratio_mv`).
     ``general=True`` uses the vector code also for ``d = 1``. Returns a dict with ``f``,
-    ``shat``, ``status`` and ``info``."""
+    ``shat``, ``status`` and ``info``.
+
+    For one ratio, ``normalize=True`` divides the expansion of every order by its total mass
+    (``info['mass']``, reusable as ``normalize``), the integral over ``r`` computed over the
+    saddlepoint ``shat`` along the curve ``s K_1 + t K_2 = 0``, ``t = -r shat``, on which
+    ``r = K_1/K_2``, with ``dr = (dr/dshat) dshat`` (see
+    :func:`~saddlepoint_expansions.ratio_quantile`)."""
+    if normalize is not False and normalize is not None:
+        from .quantiles import _ratio_mass
+        Kr = ratio_cgf2(K, 1, "ratio_density") if np.ndim(r) == 1 else K
+        if normalize is True:
+            mass = _ratio_mass(Kr, order)
+        else:
+            mass = np.asarray(normalize, dtype=float)
+        rr = ratio_density(K, r, order=order, general=general)
+        info = dict(rr["info"])
+        info["mass"] = mass[:order]
+        return dict(f=np.asarray(rr["f"]) / mass[:order], shat=rr["shat"], status=rr["status"], info=info)
     if order < 1:
         raise ValueError("ratio_density: order must be a positive integer")
     if np.ndim(r) == 1 and (len(r) > 1 or general):

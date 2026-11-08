@@ -264,3 +264,66 @@ def uniform_cgf(a=-1.0, b=1.0):
     h = (b - a) / 2
     m = (a + b) / 2
     return CGF(lambda t: np.log(sinhc(h * t[0])) + m * t[0], 1)
+
+
+def _log1pexp(z):
+    """log(1 + e^z) for numbers and polynomials, without overflow for large constant terms."""
+    c = z.constant_term() if isinstance(z, TPoly) else float(z)
+    return z + np.log(1 + np.exp(-z)) if c > 0 else np.log(1 + np.exp(z))
+
+
+def logistic_regression_cgf(X, beta=None):
+    """The sufficient statistic ``S = sum_i y_i x_i`` of a logistic regression, ``y_i`` independent
+    Bernoulli with ``log(p_i/(1 - p_i)) = x_i'beta``, ``x_i'`` the rows of the ``n x d`` design
+    ``X``: ``K(t) = sum_i [log(1 + exp(x_i'(beta + t))) - log(1 + exp(x_i'beta))]``, at ``beta``
+    (default zero). With integer covariates ``S`` is a lattice variable (``lattice=True``); the
+    conditional distribution of a component given the others, the basis of exact conditional
+    inference, is :func:`~saddlepoint_expansions.conditional_tailprob` and
+    :func:`~saddlepoint_expansions.conditional_density` with ``lattice=True``."""
+    Xm = np.asarray(X, dtype=float)
+    n, d = Xm.shape
+    b = np.zeros(d) if beta is None else np.asarray(beta, dtype=float)
+    if len(b) != d:
+        raise ValueError(f"logistic_regression_cgf: beta must have length {d}")
+    eta = Xm @ b
+    c0 = float(sum(_log1pexp(e) for e in eta))
+
+    def K(t):
+        tot = 0.0
+        for i in range(n):
+            z = eta[i]
+            for k in range(d):
+                if Xm[i, k] != 0:
+                    z = z + Xm[i, k] * t[k]
+            tot = tot + _log1pexp(z)
+        return tot - c0
+
+    return CGF(K, d)
+
+
+def poisson_cgf(lam):
+    """Poisson with mean ``lam``: ``K(t) = lam (e^t - 1)``. A lattice variable: use
+    ``lattice=True`` in :func:`~saddlepoint_expansions.tailprob` and
+    :func:`~saddlepoint_expansions.density` for ``P(S >= k)`` and ``P(S = k)``."""
+    if not lam > 0:
+        raise ValueError("poisson_cgf: lam must be positive")
+    return CGF(lambda t: lam * (np.exp(t[0]) - 1), 1)
+
+
+def binomial_cgf(m, p):
+    """Binomial with ``m`` trials and success probability ``p``: ``K(t) = m log(1 - p + p e^t)``.
+    A lattice variable (``lattice=True``)."""
+    if not (m > 0 and 0 < p < 1):
+        raise ValueError("binomial_cgf: m must be positive and 0 < p < 1")
+    return CGF(lambda t: m * np.log(1 - p + p * np.exp(t[0])), 1)
+
+
+def negative_binomial_cgf(r, p):
+    """Negative binomial, the number of failures before the ``r``-th success in Bernoulli trials
+    with success probability ``p`` (mean ``r(1 - p)/p``): ``K(t) = r log p - r log(1 - (1 - p) e^t)``,
+    ``t < -log(1 - p)``; ``r`` need not be an integer. A lattice variable (``lattice=True``)."""
+    if not (r > 0 and 0 < p < 1):
+        raise ValueError("negative_binomial_cgf: r must be positive and 0 < p < 1")
+    q = 1 - p
+    return CGF(lambda t: r * math.log(p) - r * np.log(1 - q * np.exp(t[0])), 1,
+               domain=lambda t: q * math.exp(float(t[0])) < 1)

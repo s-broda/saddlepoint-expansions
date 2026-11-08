@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "saddlepoint-expansions"
-version = "0.2.2"
+version = "0.3.0"
 description = "Saddlepoint expansions of any order for multivariate tail probabilities and densities, from the cumulant generating function"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -13,7 +13,7 @@ authors = [
   { name = "Simon A. Broda" },
   { name = "Raymond Kan" },
 ]
-keywords = ["saddlepoint approximation", "tail probability", "asymptotic expansion", "orthant probability", "Taylor-mode automatic differentiation"]
+keywords = ["saddlepoint approximation", "tail probability", "asymptotic expansion", "orthant probability", "conditional distribution", "lattice distribution", "Taylor-mode automatic differentiation"]
 classifiers = [
   "Development Status :: 3 - Alpha",
   "Intended Audience :: Science/Research",
