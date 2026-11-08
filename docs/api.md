@@ -17,6 +17,10 @@
 .. autofunction:: saddlepoint_expansions.studentized_quantile
 .. autofunction:: saddlepoint_expansions.studentized_saddlepoint
 .. autofunction:: saddlepoint_expansions.studentized_locus
+.. autofunction:: saddlepoint_expansions.conditional_tailprob
+.. autofunction:: saddlepoint_expansions.conditional_density
+.. autofunction:: saddlepoint_expansions.quantile
+.. autofunction:: saddlepoint_expansions.ratio_quantile
 .. autofunction:: saddlepoint_expansions.reflect
 .. autofunction:: saddlepoint_expansions.marginal
 .. autofunction:: saddlepoint_expansions.linear_combination
@@ -43,6 +47,7 @@
 .. autofunction:: saddlepoint_expansions.spa_mv
 .. autofunction:: saddlepoint_expansions.spa_mv_at
 .. autofunction:: saddlepoint_expansions.spa_orthant
+.. autofunction:: saddlepoint_expansions.spa_cond
 .. autofunction:: saddlepoint_expansions.orthant2
 .. autofunction:: saddlepoint_expansions.orthant3
 .. autofunction:: saddlepoint_expansions.kfun

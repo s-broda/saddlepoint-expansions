@@ -6,7 +6,7 @@ sys.path.insert(0, os.path.abspath("../src"))
 project = "saddlepoint-expansions"
 author = "Simon A. Broda and Raymond Kan"
 copyright = "2026, Simon A. Broda and Raymond Kan"
-release = "0.1.0"
+release = "0.3.0"
 
 extensions = [
     "sphinx.ext.autodoc",

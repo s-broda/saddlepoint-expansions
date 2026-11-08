@@ -140,6 +140,110 @@ the fourth are often unreliable there (the Julia package repeats the computation
 precision; here `status` reports `"coefficients inaccurate"`). The Taylor algebra carries complex
 coefficients for these expansions (the Hessian of the exponent is indefinite where $\hat t < 0$).
 
+## Conditional distributions
+
+{func}`~saddlepoint_expansions.conditional_tailprob`` (K, x, A, order=M)` returns the expansions
+of orders $1, \dots, M$ of the conditional distribution function $P(X_A \ge x_A \mid X_B = x_B)$,
+where `A` holds the (0-based) indices of the components whose tail is wanted and $B$ is the rest,
+and {func}`~saddlepoint_expansions.conditional_density`` (K, x, A, order=M)` those of the
+conditional density $f(x_A \mid x_B)$. These are the expansions of Broda and Kan, *Conditional
+saddlepoint expansions of arbitrary order* (2026, draft). The double saddlepoint approximation of
+Skovgaard (1987) to the distribution function of one component of a mean given the others is the
+conditional counterpart of the Lugannani-Rice formula; Kolassa (1996) showed that it is the first
+term of an asymptotic expansion and gave the second. The paper gives every term of every order,
+for any numbers of tail and conditioning components: the numerator of the conditional probability
+is the orthant-probability integral with the poles in the components of $A$ only, expanded to the
+terms of orders $n^{-m/2}$, $m \le 2M-1$, the denominator is the density expansion of $X_B$ at its
+own saddlepoint with $M$ terms, and the relative error is $O(n^{-M})$. The expansion is of
+Hauschildt-Robinson type and has no singular terms, its leading term being
+$(\hat u/\hat z)e^{(\hat u^2-\hat w^2)/2}\bar\Phi(\hat u)$ in Skovgaard's notation for one tail
+component (`info["Fp"][0]`); saddlepoints with negative tail components are handled by the
+inclusion-exclusion identity of the paper, and `lower` and `signs` select other corners.
+
+An example with an exact answer: $U \sim \mathrm{Gamma}(16)$ and $V \sim \mathrm{Gamma}(16)$
+independent, $X = (U, U + V)$; given $X_2 = 32$, $X_1/32$ has the $\mathrm{Beta}(16, 16)$
+distribution.
+
+```python
+from scipy.special import betaincinv
+K = CGF(lambda t: -16*np.log(1 - t[0] - t[1]) - 16*np.log(1 - t[1]), 2,
+        domain=lambda t: t[0] + t[1] < 1 and t[1] < 1)
+x1 = 32*betaincinv(16, 16, 0.9)                       # the 90% point
+r = conditional_tailprob(K, [x1, 32.0], 0, order=5)
+r["F"]                  # P(X1 >= x1 | X2 = 32), orders 1 to 5; exact 0.1
+conditional_density(K, [x1, 32.0], 0, order=5)["f"]
+```
+
+The five approximations of the tail probability have relative errors $2.5\times10^{-4}$,
+$-7.0\times10^{-5}$, $-5.6\times10^{-7}$, $5.5\times10^{-8}$ and $1.3\times10^{-9}$.
+
+The Taylor coefficients are taken in the canonical coordinates of the paper,
+$Y_A = X_A - CX_B$, $Y_B = L^{-1}X_B$, $C = K''_{AB}(K''_{BB})^{-1}$, $LL' = K''_{BB}$, in which the
+tail components are uncorrelated with the conditioning components under the tilted distribution
+and the latter are whitened; the conditional probability is unchanged, and the terms, which in the
+original coordinates cancel by up to sixteen orders of magnitude when the components are strongly
+correlated, no longer do, so that double precision suffices. With one tail component every
+integral is one-dimensional, whatever the number of conditioning variables.
+
+*Lattice variables.* With `lattice=True` the components in $A$ are integer-valued, and so is
+`x[A]`; `F` is then $P(S_A \ge k_A \mid S_B = k_B)$ with the continuity correction (the saddlepoint
+at $k_A - 1/2$) and the amplitude $\prod_{j\in A}s_j/\{2\sinh(s_j/2)\}$, expanded about the
+saddlepoint (`sinh="saddle"`, the default) or about the origin (`sinh="origin"`, keeping
+$s^{2M-2}$ at order $M$, as in Kolassa 2003), and `conditional_density` gives
+$P(S_A = k_A \mid S_B = k_B)$. For the sufficient statistic of a logistic regression with integer
+covariates ({func}`~saddlepoint_expansions.logistic_regression_cgf`):
+
+```python
+X = np.column_stack([np.ones(30, dtype=int), np.arange(30) % 5, np.arange(30) % 3])
+K = logistic_regression_cgf(X)                        # S = X'y under beta = 0
+conditional_tailprob(K, [15, 37, 15], 1, order=4, lattice=True)["F"]   # P(S1 >= 37 | S0 = 15, S2 = 15)
+conditional_density(K, [15, 37, 15], 1, order=4, lattice=True)["f"]    # P(S1 = 37 | S0 = 15, S2 = 15)
+```
+
+{func}`~saddlepoint_expansions.spa_cond` is the same computation from user-supplied derivatives.
+
+## Lattice variables
+
+For an integer-valued vector without conditioning, `tailprob(K, k, lattice=True)` returns the
+continuity-corrected expansions of $P(S \ge k)$ and `density(K, k, lattice=True)` those of
+$P(S = k)$, the case without conditioning components of the lattice theorem of the conditional
+paper (the computation of `conditional_tailprob` with every component in `A`, with the same
+numbers); in one dimension the approximation of order one has the accuracy of the
+continuity-corrected approximations of Daniels (1987). {func}`~saddlepoint_expansions.poisson_cgf`,
+{func}`~saddlepoint_expansions.binomial_cgf` and {func}`~saddlepoint_expansions.negative_binomial_cgf`
+are in the library:
+
+```python
+tailprob(poisson_cgf(5.0), 11, order=4, lattice=True)["F"]    # P(S >= 11), exact 0.0136953
+density(poisson_cgf(5.0), 11, order=4, lattice=True)["f"]     # P(S = 11)
+```
+
+Where the continuity-corrected point lies outside the convex hull of the support, as for
+$P(S \ge 0)$ of a count, there is no saddlepoint and a `DomainError` is raised.
+
+## Quantiles
+
+{func}`~saddlepoint_expansions.quantile`` (K, p, order=M)` returns the point at which the
+saddlepoint distribution function of order $M$ of a univariate variable equals `p`
+(`lower=False` for the upper tail), and {func}`~saddlepoint_expansions.ratio_quantile` the same for
+a ratio with a positive denominator. The search runs in saddlepoint space: the point is
+parametrized by its saddlepoint, $x = K'(s)$, so that each iterate comes with its saddlepoint and
+no saddlepoint equation is solved, and Newton's method in $s$ uses the density expansion times
+$K''(s)$ as the derivative, safeguarded by bracketing and bisection. For a ratio the parameter is
+the saddlepoint of $X_1 - rX_2$, which moves along the curve $sK_1 + tK_2 = 0$ on which
+$r = K_1/K_2$.
+
+## Normalized densities
+
+`density(K, x, normalize=True)` divides the expansion of every order by its total mass, computed
+in saddlepoint space, $\int f(x)\,dx = \int f(K'(s))\det K''(s)\,ds$, so that the saddlepoint is
+known at every quadrature node, by `scipy.integrate.quad_vec` over the domain of $K$ (nested over
+the coordinates in more dimensions, which is slow); the masses are returned in `info["mass"]` and
+can be passed back as `normalize`. For the gamma distribution every normalized order is exact.
+`ratio_density` accepts the same option for one ratio. The Studentized density does not: its terms
+of high order cancel catastrophically in the tails, where the Julia package computes them in
+higher precision.
+
 ## Closed-form Taylor polynomials
 
 Automatic differentiation is the default, but a `CGF` can carry its Taylor polynomials in closed

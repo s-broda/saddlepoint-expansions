@@ -21,6 +21,11 @@ automatic differentiation with the truncated-polynomial algebra of
 {mod}`saddlepoint_expansions.taylor`, directly in the whitened coordinates in which the terms
 are evaluated.
 
+The conditional expansions of Broda and Kan, *Conditional saddlepoint expansions of arbitrary
+order*, for $P(X_A \ge x_A \mid X_B = x_B)$ and the conditional density, of every order, for
+continuous and lattice variables, the lattice expansions without conditioning, quantiles in
+saddlepoint space and normalized densities are also included (see the guide).
+
 ## Installation
 
 ```
