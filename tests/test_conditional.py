@@ -5,12 +5,10 @@ Gaussian vectors, the Dirichlet distribution, the derivative interface, the lead
 
 The relative errors are printed with two significant digits; a computed value reproduces a printed
 one when it rounds to it, and values below 1e-10, at the rounding level of the exact values, are
-compared to 2e-12 absolute. The cells in FIX1, FIX2 are not reproduced: the value printed in the
-paper carries a rounding or truncation error of the MATLAB program that produced the table, and the
-value given here is that of the expansion, the same in double precision and in BigFloat (Julia
-package): the polynomial substitution into the canonical coordinates, and the truncation of the
-orthant integrals at u v + v^2/2 = 40, which leaves out the growth of the Hermite polynomials of
-high degree (order 5 at the medians)."""
+compared to 2e-12 absolute. The rows are those of the tables regenerated with the corrected program
+spa_cond.m of the paper (closed-form derivatives in the canonical coordinates in cond_beta.m, the
+truncation of the orthant integrals with the degree of the Hermite polynomials, Kolassa's truncation
+of the lattice amplitude about the origin, relative errors of lattice tails to min(P, 1 - P))."""
 import math
 import os
 from collections import defaultdict
@@ -66,9 +64,6 @@ def Phi(x):
     return erfc(-x / math.sqrt(2)) / 2
 
 
-FIX1 = {2: {4: -6.7e-16}, 4: {4: -7.5e-7, 9: 1.4e-6}, 16: {3: 8.3e-7}, 17: {4: 5.1e-6}, 22: {4: 4.4e-9},
-        33: {4: -5.6e-5, 9: 2.1e-5}, 34: {3: 5.3e-5, 4: -7.2e-5, 8: 5.0e-5, 9: 2.1e-5}, 39: {4: -2.6e-9}}
-FIX2 = {2: {4: 3.4e-8}}
 
 
 def beta_K(block, N):
@@ -106,7 +101,7 @@ def test_table_gamma_sum(i):
     assert r["status"] == "ok" and f["status"] == "ok"
     assert printed(Pu, pval(cells[2])) and round(r["tau"][0], 2) == pval(cells[3])
     comp = np.concatenate([(r["F"] - Pu) / min(Pu, Pl), f["f"] / fex - 1])
-    assert all(rowcheck(comp, cells[4:14], FIX1.get(i, {})))
+    assert all(rowcheck(comp, cells[4:14], {}))
 
 
 @pytest.mark.parametrize("i", range(30))
@@ -137,7 +132,7 @@ def test_table_quadratic_forms(i):
     f = se.conditional_density(K, [x1, x2], 0, order=5)
     assert printed(Pu, pval(cells[2])) and round(r["tau"][0], 2) == pval(cells[3])
     comp = np.concatenate([(r["F"] - Pu) / min(Pu, Pl), f["f"] / fex - 1])
-    assert all(rowcheck(comp, cells[4:14], FIX2.get(i, {})))
+    assert all(rowcheck(comp, cells[4:14], {}))
 
 
 # the exact upper quantiles of S = N Rbar (Gil-Pelaez inversion, computed by the Julia package)
@@ -210,8 +205,6 @@ def test_table_logistic_regression():
     for j in range(n):                       # the exact joint pmf of S under beta = 0
         pm = (pm + np.roll(pm, tuple(X[j]), axis=(0, 1, 2))) / 2
     K = se.logistic_regression_cgf(X)
-    from saddlepoint_expansions.conditional import _spa_cond
-    Kf, Kw = se.kfun(K, 9), se.kwhite(K, 9)
     i = 0
     for k0, k2 in ((15, 15), (10, 12), (12, 9)):
         q = pm[k0, :, k2] / pm[k0, :, k2].sum()
@@ -224,15 +217,12 @@ def test_table_logistic_regression():
             x = [k0, k1, k2]
             r = se.conditional_tailprob(K, x, 1, order=4, lattice=True)
             f = se.conditional_density(K, x, 1, order=4, lattice=True)
-            # the MATLAB program keeps the expansion of s/(2 sinh(s/2)) about the origin to
-            # s^(2 order - 2) = s^6 at every order; Kolassa's truncation (sinh='origin') keeps s^2
-            r6 = _spa_cond(Kf, Kw, x, [1], 4, density=False, lattice=True, sinh="origin", sinhdeg=6)
+            # the last column: the amplitude expanded about the origin, kept to s^2 at order 2
             ro = se.conditional_tailprob(K, x, 1, order=4, lattice=True, sinh="origin")
             assert int(cells[0]) == k1 and printed(Pu, pval(cells[1])) and round(r["tau"][1], 2) == pval(cells[2])
             assert r["status"] == "ok"
-            comp = np.concatenate([(r["F"] - Pu) / min(Pu, Pl), f["f"] / pk - 1, [(r6["P"][1] - Pu) / min(Pu, Pl)]])
+            comp = np.concatenate([(r["F"] - Pu) / min(Pu, 1 - Pu), f["f"] / pk - 1, [(ro["F"][1] - Pu) / min(Pu, 1 - Pu)]])
             assert all(rowcheck(comp, cells[3:12], {}))
-            assert abs(ro["F"][1] - Pu) / min(Pu, Pl) < 4e-3
             rl = se.conditional_tailprob(K, [k0, k1 - 1, k2], 1, order=4, lattice=True, lower=True)
             assert np.max(np.abs(rl["F"] + r["F"] - 1)) < 1e-14
     assert i == 21

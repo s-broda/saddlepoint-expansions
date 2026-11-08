@@ -422,7 +422,7 @@ def _cond_lattice_ct(c, Gc, IL, A, UA, p, L):
     return ct
 
 
-def _cond_numer(Kfun, Kwhite, tau, x, A, order, logscale, lattice, mode, nG, sinhdeg):
+def _cond_numer(Kfun, Kwhite, tau, x, A, order, logscale, lattice, mode, nG):
     d = len(x)
     B = [j for j in range(d) if j not in A]
     a = len(A)
@@ -469,7 +469,7 @@ def _cond_numer(Kfun, Kwhite, tau, x, A, order, logscale, lattice, mode, nG, sin
             if mode == "saddle" and M > 1:
                 ctM[M - 1] = ctM[0]
                 continue
-            dg = (2 * M - 2 if sinhdeg is None else sinhdeg) if mode == "origin" else 0
+            dg = 2 * M - 2 if mode == "origin" else 0
             Gc = [_sinhcoef(float(tau[A[i]]), L, mode, dg) for i in range(a)]
             ctM[M - 1] = _cond_lattice_ct(c, Gc, IL, A, UA, p, L)
     logE0 = K0 - float(tau @ x) - logdetL - b / 2 * math.log(2 * math.pi) - logscale
@@ -510,7 +510,7 @@ def _cond_numer(Kfun, Kwhite, tau, x, A, order, logscale, lattice, mode, nG, sin
 
 # ----- the tail probability, with the inclusion-exclusion over the negative components of A
 
-def _cond_tail(Kfun, Kwhite, x, A, order, den, tau0, lattice, mode, nG, sinhdeg):
+def _cond_tail(Kfun, Kwhite, x, A, order, den, tau0, lattice, mode, nG):
     d = len(x)
     xc = x.copy()
     if lattice:
@@ -525,7 +525,7 @@ def _cond_tail(Kfun, Kwhite, x, A, order, den, tau0, lattice, mode, nG, sinhdeg)
     Nn = [j for j in A if tau[j] < 0]
     logf0B, sB, _ = den
     if not Nn:
-        D, Dabs, err = _cond_numer(Kfun, Kwhite, tau, xc, A, order, logf0B, lattice, mode, nG, sinhdeg)
+        D, Dabs, err = _cond_numer(Kfun, Kwhite, tau, xc, A, order, logf0B, lattice, mode, nG)
         sj = np.array([sB[j // 2] for j in range(2 * order)])
         return D / sj, Dabs / np.abs(sj), err / np.abs(sj), tau
     B = [j for j in range(d) if j not in A]
@@ -565,7 +565,7 @@ def _cond_tail(Kfun, Kwhite, x, A, order, den, tau0, lattice, mode, nG, sinhdeg)
         if lattice:
             x2[Tset] += 1
         A2 = [keep.index(j) for j in tail]
-        P2, a2, e2, _ = _cond_tail(Km, Kw, x2[keep], A2, order, den, (flip * tau)[keep], lattice, mode, nG, sinhdeg)
+        P2, a2, e2, _ = _cond_tail(Km, Kw, x2[keep], A2, order, den, (flip * tau)[keep], lattice, mode, nG)
         P += sgn * P2
         abssum += a2
         err += e2
@@ -573,7 +573,7 @@ def _cond_tail(Kfun, Kwhite, x, A, order, den, tau0, lattice, mode, nG, sinhdeg)
 
 
 def _spa_cond(Kfun, Kwhite, x, A, order, tail=True, density=True, lattice=False, sinh="saddle", nG=64,
-              tau0=None, sinhdeg=None):
+              tau0=None):
     if order < 1:
         raise ValueError("spa_cond: order must be a positive integer")
     x = np.atleast_1d(np.asarray(x, dtype=float)).copy()
@@ -633,7 +633,7 @@ def _spa_cond(Kfun, Kwhite, x, A, order, tail=True, density=True, lattice=False,
     tau = np.full(d, np.nan)
     if tail:
         st = tauf if density else t0
-        Pp, abssum, errp, tau = _cond_tail(Kfun, Kwhite, x, A, order, den, st, lattice, sinh, nG, sinhdeg)
+        Pp, abssum, errp, tau = _cond_tail(Kfun, Kwhite, x, A, order, den, st, lattice, sinh, nG)
         P = Pp[1::2].copy()
         err = errp[1::2].copy()
         kappaP = abssum[1::2] / np.abs(P)
