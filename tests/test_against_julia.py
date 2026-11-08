@@ -272,3 +272,77 @@ def test_normal_mixed_corner():
     ex = get1("normal_mixed", "exact")
     assert abs(r["F"][0] / ex - 1) < 1e-9
     assert abs(se.orthant2([0.5, 0.3], [[1.0, -0.6], [-0.6, 2.0]]) / ex - 1) < 1e-12
+
+
+class TestConditional:
+    """The conditional expansions, lattice sums, quantiles and normalized densities (version 0.3.0)
+    against the Julia package; the same algorithms, quadrature nodes and canonical coordinates."""
+
+    Kb2 = se.CGF(lambda t: -16 * np.log(1 - t[0] - t[1]) - 16 * np.log(1 - t[1]), 2,
+                 domain=lambda t: t[0] + t[1] < 1 and t[1] < 1)
+
+    @pytest.mark.parametrize("name,x", [("pos", [19.0, 32.0]), ("neg", [12.0, 32.0])])
+    def test_gamma_sum(self, name, x):
+        r = se.conditional_tailprob(self.Kb2, x, 0, order=5)
+        assert rel(r["F"], get("cond_beta2", "F_" + name)) < 1e-12
+        assert rel(r["info"]["Fp"], get("cond_beta2", "Fp_" + name)) < 1e-12
+        assert np.allclose(r["tau"], get("cond_beta2", "tau_" + name), rtol=1e-12, atol=1e-14)
+        assert np.allclose(r["taut"], get("cond_beta2", "taut_" + name), rtol=1e-12, atol=1e-14)
+        assert rel(se.conditional_density(self.Kb2, x, 0, order=5)["f"], get("cond_beta2", "f_" + name)) < 1e-12
+
+    def test_gamma_sum_lower_and_d3(self):
+        assert rel(se.conditional_tailprob(self.Kb2, [19.0, 32.0], 0, order=5, lower=True)["F"], get("cond_beta2", "Flow_pos")) < 1e-12
+        K3 = se.CGF(lambda t: -16 * np.log(1 - t[0] - t[1]) - 32 * np.log(1 - t[1] - t[2]) - 8 * np.log(1 - t[1]), 3,
+                    domain=lambda t: t[0] + t[1] < 1 and t[1] + t[2] < 1 and t[1] < 1)
+        assert rel(se.conditional_tailprob(K3, [18.0, 56.0, 32.0], 0, order=4)["F"], get("cond_beta3", "F")) < 1e-11
+        assert rel(se.conditional_density(K3, [18.0, 56.0, 32.0], 0, order=4)["f"], get("cond_beta3", "f")) < 1e-11
+
+    def test_quadratic_forms(self):
+        K = se.common_component_cgf([15, 20, 10], [5, 10, 8])
+        assert rel(se.conditional_tailprob(K, [55.0, 50.0], 0, order=5)["F"], get("cond_bqf", "F")) < 1e-12
+        assert rel(se.conditional_density(K, [55.0, 50.0], 0, order=5)["f"], get("cond_bqf", "f")) < 1e-12
+
+    def test_two_tail_components(self):
+        K = se.CGF(lambda t: -5 * np.log(1 - t[0] - t[2]) - 7.5 * np.log(1 - t[1] - t[2]) - 10 * np.log(1 - t[2]), 3,
+                   domain=lambda t: t[0] + t[2] < 1 and t[1] + t[2] < 1 and t[2] < 1)
+        assert rel(se.conditional_tailprob(K, [0.35 * 22.5, 0.45 * 22.5, 22.5], [0, 1], order=3)["F"], get("cond_dir", "F")) < 1e-11
+        assert rel(se.conditional_tailprob(K, [0.30 * 22.5, 0.25 * 22.5, 22.5], [0, 1], order=3)["F"], get("cond_dir", "F_mixed")) < 1e-11
+        assert rel(se.conditional_tailprob(K, [0.30 * 22.5, 0.25 * 22.5, 22.5], [0, 1], order=3, signs=[1, -1])["F"],
+                   get("cond_dir", "F_signs")) < 1e-11
+        assert rel(se.conditional_density(K, [0.35 * 22.5, 0.45 * 22.5, 22.5], [0, 1], order=3)["f"], get("cond_dir", "f")) < 1e-12
+
+    def test_logistic_lattice(self):
+        X = np.column_stack([np.ones(30, dtype=int), np.arange(30) % 5, np.arange(30) % 3])
+        K = se.logistic_regression_cgf(X)
+        for name in ("saddle", "origin"):
+            r = se.conditional_tailprob(K, [15, 37, 15], 1, order=4, lattice=True, sinh=name)
+            assert rel(r["F"], get("cond_logit", "F_" + name)) < 1e-12
+        assert rel(se.conditional_tailprob(K, [10, 14, 12], 1, order=4, lattice=True)["F"], get("cond_logit", "F_neg")) < 1e-12
+        assert rel(se.conditional_density(K, [15, 37, 15], 1, order=4, lattice=True)["f"], get("cond_logit", "pmf")) < 1e-12
+
+    def test_sum_of_ratios(self):
+        lamr = [np.array([-0.6, -0.1, 0.3, 0.7, 0.9]), np.array([-0.8, -0.2, 0.0, 0.4, 0.5, 0.8])]
+        K = se.CGF(lambda t: -sum(sum(np.log(1 - 2 * (t[0] * l + t[i + 1])) for l in lamr[i]) for i in range(2)) / 2, 3)
+        assert rel(se.conditional_tailprob(K, [0.5, 1.0, 1.0], 0, order=4)["F"], get("cond_ratios", "F")) < 1e-11
+
+    def test_lattice_sums(self):
+        assert rel(se.tailprob(se.poisson_cgf(5.0), 11, order=4, lattice=True)["F"], get("lattice", "pois_F")) < 1e-12
+        assert rel(se.tailprob(se.poisson_cgf(5.0), 3, order=4, lattice=True)["F"], get("lattice", "pois_Fneg")) < 1e-12
+        assert rel(se.density(se.poisson_cgf(5.0), 11, order=4, lattice=True)["f"], get("lattice", "pois_f")) < 1e-12
+        assert rel(se.tailprob(se.binomial_cgf(40, 0.3), 18, order=4, lattice=True)["F"], get("lattice", "binom_F")) < 1e-12
+        assert rel(se.tailprob(se.binomial_cgf(40, 0.3), 9, order=4, lattice=True, lower=True)["F"], get("lattice", "binom_Flow")) < 1e-12
+        assert rel(se.tailprob(se.negative_binomial_cgf(5.0, 0.4), 15, order=4, lattice=True)["F"], get("lattice", "negbin_F")) < 1e-12
+        Kbp = se.CGF(lambda t: 2 * (np.exp(t[0]) - 1) + 2 * (np.exp(t[1]) - 1) + (np.exp(t[0] + t[1]) - 1), 2)
+        assert rel(se.tailprob(Kbp, [6, 2], order=4, lattice=True)["F"], get("lattice", "bipois_F")) < 1e-11
+        assert rel(se.density(Kbp, [6, 2], order=4, lattice=True)["f"], get("lattice", "bipois_f")) < 1e-12
+
+    def test_quantiles_and_normalization(self):
+        q = se.quantile(se.gamma_cgf(3.0), 0.05, order=4)
+        assert abs(q["q"] / get1("quantile", "gamma_q") - 1) < 1e-12 and abs(q["tau"] / get1("quantile", "gamma_tau") - 1) < 1e-11
+        assert abs(se.quantile(se.gamma_cgf(3.0), 1e-6, order=4, lower=False)["q"] / get1("quantile", "gamma_q_upper") - 1) < 1e-12
+        KF = se.CGF(lambda t: se.ncx2_cgf(4, 3)(t[:1]) + se.ncx2_cgf(12)(t[1:]), 2, domain=lambda t: t[0] < 0.5 and t[1] < 0.5)
+        q = se.ratio_quantile(KF, 0.99, order=4)
+        assert abs(q["r"] / get1("quantile", "ncf_r") - 1) < 1e-12 and abs(q["shat"] / get1("quantile", "ncf_shat") - 1) < 1e-10
+        assert rel(se.density(se.gamma_cgf(3.0), 2.0, order=4, normalize=True)["info"]["mass"], get("normalize", "gamma_mass")) < 1e-11
+        assert rel(se.density(se.ncx2_cgf(4, 3), 7.0, order=3, normalize=True)["info"]["mass"], get("normalize", "ncx2_mass")) < 1e-10
+        assert rel(se.ratio_density(KF, 1.0, order=3, normalize=True)["info"]["mass"], get("normalize", "ratio_mass")) < 1e-9
